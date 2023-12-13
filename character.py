@@ -6,12 +6,25 @@ class Character:
         self.name = name
         self.max_hit_dice = 5
         self.hit_dice = 5
-        self.con = 3
+        
         self.spells_prepered = {
                                 'Eldritch Blast':'cantrip',
                                 'Armor of Aghatys': 'tier 1',
                                 'Invisibility': 'tier 2'}
-        self.max_prepered = 2
+        self.max_prepered_spells = 2
+        
+        self.stre=0
+        self.dex = 0
+        self.con = 3
+        self.inte = 0
+        self.wis =0
+        self.cha=0
+        self.lvl=1
+        self.short_rest_abilities =[]
+        self.long_rest_abilities=[]
+
+    
+
     def heal(self,entry):
         try:
             heal = int(entry.get())
