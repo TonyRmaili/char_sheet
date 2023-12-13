@@ -1,8 +1,8 @@
 
 class Character:
-    def __init__(self,max_hp,hp,name):
+    def __init__(self,name,max_hp=None):
         self.max_hp = max_hp
-        self.hp = hp
+        self.hp = self.max_hp
         self.name = name
         self.max_hit_dice = 5
         self.hit_dice = 5
