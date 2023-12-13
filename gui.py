@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 from character import Character
-# from grider import Grider
+
 
 class TkGui:
     def __init__(self):
