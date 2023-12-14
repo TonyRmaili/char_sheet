@@ -27,7 +27,7 @@ class Character:
 
     def heal(self,entry):
         try:
-            heal = int(entry.get())
+            heal = entry.get()
             self.hp += heal
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
@@ -36,7 +36,7 @@ class Character:
     
     def damage(self,entry):
         try:
-            damage = int(entry.get())
+            damage = entry.get()
             self.hp -= damage
             if self.hp < 0:
                 self.hp = 0
