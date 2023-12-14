@@ -1,29 +1,45 @@
 
 class Character:
     def __init__(self,name,max_hp,max_hit_dice):
-        self.max_hp = max_hp
-        self.hp = self.max_hp
         self.name = name
+        self.lvl=1
+        self.max_hp = max_hp
+        
         self.max_hit_dice = max_hit_dice
         self.hit_dice = 5
         
-        self.spells_prepered = {
-                                'Eldritch Blast':'cantrip',
-                                'Armor of Aghatys': 'tier 1',
-                                'Invisibility': 'tier 2'}
-        self.max_prepered_spells = 2
-        
+        # ability score
         self.stre=0
         self.dex = 0
         self.con = 3
         self.inte = 0
         self.wis =0
         self.cha=0
-        self.lvl=1
+        
+        # main labels
+        self.hp = self.max_hp
+        self.AC = 0
+        self.initiative = 0
+        self.speed = 0
+        self.atk =0
+        self.sp_atk= 0
+        self.DC =0
+        self.PB = 0
+        self.main_labels = {'HP':self.hp,'Hit Dice':self.hit_dice,
+                            'Init':self.initiative,'Speed':self.speed,
+                            'Atk':self.atk,'Sp_atk':self.sp_atk,
+                            'DC':self.DC,'PB':self.PB,'AC':self.AC}
+        
+        # work in progress
+        self.reaction = True
         self.short_rest_abilities =[]
         self.long_rest_abilities=[]
+        self.spells_prepered = {
+                                'Eldritch Blast':'cantrip',
+                                'Armor of Aghatys': 'tier 1',
+                                'Invisibility': 'tier 2'}
+        self.max_prepered_spells = 2
 
-    
 
     def heal(self,entry):
         try:

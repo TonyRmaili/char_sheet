@@ -27,23 +27,54 @@ class MkGui3:
         self.buttons_with_entry()
         
 
-
-    def variable_widgets(self):
-        var_stats=['hp','hit_dice']
-    
-
     def main_labels(self):
         self.main_frame = tk.Frame(self.root)
-        self.main_frame.grid(row=0,column=0)
+        self.main_frame.grid(row=0,column=0,sticky='we')
 
-        self.max_hp_label = tk.Label(self.main_frame, text=f"Max HP: {self.char.max_hp}")
-        self.max_hp_label.grid(row=0, column=0)
+        # row 0
+        self.hp_label = tk.Label(self.main_frame, text=f"HP: {self.char.hp} / {self.char.max_hp}")
+        self.hp_label.grid(row=0, column=0,padx=10)
 
-        self.hp_label = tk.Label(self.main_frame, text=f"Current HP: {self.char.hp}")
-        self.hp_label.grid(row=1, column=0)
+        self.hit_dice = tk.Label(self.main_frame, text=f"Hit Dice: {self.char.hit_dice}")
+        self.hit_dice.grid(row=0, column=1)
 
-        self.hit_dice_label = tk.Label(self.main_frame, text=f"Hit Dice: {self.char.hit_dice}")
-        self.hit_dice_label.grid(row=2, column=0)
+        self.AC_label = tk.Label(self.main_frame, text=f"AC: {self.char.AC}")
+        self.AC_label.grid(row=0, column=2)
+
+        self.DC_label = tk.Label(self.main_frame, text=f"DC: {self.char.DC}")
+        self.DC_label.grid(row=0, column=3)
+
+        self.atk_label = tk.Label(self.main_frame, text=f"Atk: +{self.char.atk}")
+        self.atk_label.grid(row=0, column=4)
+
+        self.ini_label = tk.Label(self.main_frame, text=f"Init: +{self.char.initiative}")
+        self.ini_label.grid(row=0, column=5)
+
+        # row 1
+        self.speed_label = tk.Label(self.main_frame, text=f"Speed: {self.char.speed}")
+        self.speed_label.grid(row=1, column=0)
+
+        self.sp_atk_label = tk.Label(self.main_frame, text=f"Sp_atk: {self.char.sp_atk}")
+        self.sp_atk_label.grid(row=1, column=1)
+
+        self.PB_label = tk.Label(self.main_frame, text=f"PB: {self.char.PB}")
+        self.PB_label.grid(row=1, column=2)
+
+    def config_lables(self):
+        try:
+            self.hp_label.config(text=f"HP: {self.char.hp} / {self.char.max_hp}")
+            self.hit_dice.config(text=f"Hit Dice: {self.char.hit_dice}")
+            self.AC_label.config(text=f"AC: {self.char.AC}")
+            self.DC_label.config(text=f"DC: {self.char.DC}")
+            self.atk_label.config(text=f"Atk: {self.char.atk}")
+            self.ini_label.config(text=f"Init: {self.char.initiative}")
+            self.speed_label.config(text=f"Speed: {self.char.speed}")
+            self.sp_atk_label.config(text=f"Sp_atk: {self.char.sp_atk}")
+            self.PB_label.config(text=f'PB: {self.char.PB}')
+
+        except AttributeError:
+            pass
+
 
     def buttons_with_entry(self):
         def on_heal_button():
@@ -57,7 +88,7 @@ class MkGui3:
             self.config_lables()
         
         self.bwe_frame = tk.Frame(self.root)
-        self.bwe_frame.grid(row=0,column=1,padx=5,pady=5)
+        self.bwe_frame.grid(row=1,column=0,padx=5,pady=5)
 
         #heal
         self.heal_entry =tk.Entry(self.bwe_frame,width=5)
@@ -91,14 +122,7 @@ class MkGui3:
                                           command=self.take_long_rest)
         self.long_rest_button.grid(row=1, column=0, pady=5)
 
-    def config_lables(self):
-        try:
-            self.max_hp_label.config(text=f"Max HP: {self.char.max_hp}")
-            self.hp_label.config(text=f"Current HP: {self.char.hp}")
-            self.hit_dice_label.config(text=f"Hit Dice: {self.char.hit_dice}")
-        except AttributeError:
-            pass
-
+    
 
     def create_char_menu(self):
         menu = tk.Menu(self.menu_on_root, tearoff=0)
@@ -119,7 +143,6 @@ class MkGui3:
         self.root.title(self.char.name)
         self.config_lables()
         
-
     def create_char_level(self):
         create_char_lvl = tk.Toplevel(self.root)
         create_char_lvl.title("Character Creation")
