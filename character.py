@@ -1,10 +1,10 @@
 
 class Character:
-    def __init__(self,name,max_hp=None):
+    def __init__(self,name,max_hp,max_hit_dice):
         self.max_hp = max_hp
         self.hp = self.max_hp
         self.name = name
-        self.max_hit_dice = 5
+        self.max_hit_dice = max_hit_dice
         self.hit_dice = 5
         
         self.spells_prepered = {

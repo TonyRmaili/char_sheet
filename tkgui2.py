@@ -94,7 +94,6 @@ class TkGui2:
         done_button = tk.Button(create_char_lvl, text='Done', command=on_done_click)
         done_button.grid(row=row_index, column=1, pady=10)
 
-
     def run(self):
         self.root.mainloop()
 
