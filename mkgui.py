@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import json,os
 from character import Character
 
@@ -24,7 +25,8 @@ class MkGui3:
         self.create_char_menu()
         self.root.config(menu=self.menu_on_root)
         self.main_labels()
-        self.buttons_with_entry()
+        self.hp_frame()
+        self.buttons()
         
 
     def main_labels(self):
@@ -75,14 +77,17 @@ class MkGui3:
         except AttributeError:
             pass
 
-
-    def buttons_with_entry(self):
+    def hp_frame(self):
         def on_heal_button():
-            self.char.heal(entry=self.heal_entry)
+            self.char.heal(entry=int(self.hp_entry.get()))
             self.config_lables()
+            self.hp_entry.delete(0, tk.END)
+            
         def on_damage_button():
-            self.char.damage(entry=self.damage_entry)
+            self.char.damage(entry=int(self.hp_entry.get()))
             self.config_lables()
+            self.hp_entry.delete(0, tk.END)
+
         def on_hit_dice_button():
             self.char.spend_hit_dice()
             self.config_lables()
@@ -91,38 +96,72 @@ class MkGui3:
         self.bwe_frame.grid(row=1,column=0,padx=5,pady=5)
 
         #heal
-        self.heal_entry =tk.Entry(self.bwe_frame,width=5)
-        self.heal_entry.grid(row=0,column=0)
+        self.hp_entry =tk.Entry(self.bwe_frame,width=5)
+        self.hp_entry.grid(row=0,column=0)
+
         self.heal_button=tk.Button(self.bwe_frame,text='Heal',
                                    command=on_heal_button)
         self.heal_button.grid(row=0,column=1)
         #damge 
-        self.damage_entry = tk.Entry(self.bwe_frame,width=5)
-        self.damage_entry.grid(row=1, column=0, pady=5)
+        
         self.damage_button = tk.Button(self.bwe_frame,text='Damage',
                                      command=on_damage_button)
-        self.damage_button.grid(row=1, column=1, pady=5)
+        self.damage_button.grid(row=0, column=2, pady=5)
 
         # hit dice
-        self.hit_dice_entry = tk.Entry(self.bwe_frame,width=5)
-        self.hit_dice_entry.grid(row=2, column=0, pady=5)
+        
         self.hit_dice_button = tk.Button(self.bwe_frame,text='Hit Dice',
                                      command=on_hit_dice_button)
-        self.hit_dice_button.grid(row=2, column=1, pady=5)
+        self.hit_dice_button.grid(row=0, column=3, pady=5)
     
     def buttons(self):
+        def open_spell_book():
+            spell_book_window = tk.Toplevel(self.root)
+            spell_book_window.title("Spell Book")
+            spell_book_window.geometry("300x200")
+
+            # lables- spells from character
+            row_index = 0
+            for spell in self.char.spells_prepered.keys():   
+                spell_label = tk.Label(spell_book_window, text=spell)
+                spell_label.grid(row=row_index,column=0)
+                checkbutton = tk.Checkbutton(spell_book_window)
+                checkbutton.grid(row=row_index,column=1,pady=5)
+                row_index += 1
+
+        def take_long_rest():
+            self.char.long_rest()
+            self.config_lables()
+
+        def take_short_rest():
+            print('taking short rest')
+        
+        def spend_spell_slot(event):
+            selected_item = spend_spellslot_button.get()
+            print(f"spent a {selected_item} spell slot")
+            spend_spellslot_button.set("Select a Spellslot to spend")  # Set the Combobox to its default value
+
         self.buttons_frame= tk.Frame(self.root)
-        self.buttons_frame.grid(row=0,column=2,padx=5,pady=5)
+        self.buttons_frame.grid(row=2,column=0,padx=15,sticky='w')
 
         self.spell_book_button = tk.Button(self.buttons_frame,text='Spell Book',
-                                           command=self.open_spell_book)
-        self.spell_book_button.grid(row=0, column=0, pady=5)
+                                           command=open_spell_book)
+       
+        self.spell_book_button.grid(row=0, column=0)
+
+        self.short_rest_button = tk.Button(self.buttons_frame,text='Short Rest',
+                                          command=take_short_rest)
+        self.short_rest_button.grid(row=1, column=0, pady=5)
 
         self.long_rest_button = tk.Button(self.buttons_frame,text='Long Rest',
-                                          command=self.take_long_rest)
-        self.long_rest_button.grid(row=1, column=0, pady=5)
+                                          command=take_long_rest)
+        self.long_rest_button.grid(row=2, column=0, pady=5)
 
-    
+        spend_spellslot_button = ttk.Combobox(self.buttons_frame,values=self.char.spell_tiers)
+        spend_spellslot_button.set("Select a Spellslot to spend") 
+        spend_spellslot_button.bind("<<ComboboxSelected>>", spend_spell_slot)                        
+        spend_spellslot_button.grid(row=3,column=0)
+        
 
     def create_char_menu(self):
         menu = tk.Menu(self.menu_on_root, tearoff=0)

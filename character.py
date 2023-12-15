@@ -8,7 +8,7 @@ class Character:
         self.max_hit_dice = max_hit_dice
         self.hit_dice = 5
         
-        # ability score
+        # ability score - int values
         self.stre=0
         self.dex = 0
         self.con = 3
@@ -16,7 +16,7 @@ class Character:
         self.wis =0
         self.cha=0
         
-        # main labels
+        # main labels - int values
         self.hp = self.max_hp
         self.AC = 0
         self.initiative = 0
@@ -38,33 +38,52 @@ class Character:
                                 'Eldritch Blast':'cantrip',
                                 'Armor of Aghatys': 'tier 1',
                                 'Invisibility': 'tier 2'}
+        self.setup_spell_tiers()
         self.max_prepered_spells = 2
 
 
+    def setup_spell_tiers(self):
+        self.spell_tiers =[]
+        for tier in self.spells_prepered.values():
+            if tier == 'cantrip':
+                pass
+            else:
+                self.spell_tiers.append(tier)
+
     def heal(self,entry):
         try:
-            heal = entry.get()
+            self.hp = int(self.hp)
+            self.max_hp = int(self.max_hp)
+            heal = entry
             self.hp += heal
             if self.hp > self.max_hp:
                 self.hp = self.max_hp
         except ValueError:
             print('value error')
+        except TypeError:
+            print('value error')
     
     def damage(self,entry):
         try:
-            damage = entry.get()
+            self.hp = int(self.hp)
+            damage = entry
             self.hp -= damage
             if self.hp < 0:
                 self.hp = 0
         except ValueError as e:
             print('value error')
+        except TypeError:
+            print('value error')
 
     def spend_hit_dice(self):
+        self.hit_dice =int(self.hit_dice)
         self.hit_dice -= 1
         if self.hit_dice < 0:
             self.hit_dice = 0
             return 'no more hit dice left'
-        self.hp += (self.con + 5)
+        self.hp = int(self.hp)
+        self.hp += (int(self.con) + 5)
+        self.max_hp = int(self.max_hp)
         if self.hp > self.max_hp:
             self.hp = self.max_hp
 
