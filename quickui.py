@@ -8,6 +8,12 @@ class Numberz:
                     'Two':self.two}
 
 ch = Numberz()
-ch.dic['One'] = 5
-print(ch.one)
+
+
+ch.one = 5
+
+setattr(ch, 'one', 5)
+
+print(ch.one) 
+
 

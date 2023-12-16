@@ -181,9 +181,14 @@ class MkGui3:
     
     def load_character(self,name):
         with open(file=folder_path+name+'.json') as file:
-            self.stats = json.load(file)
+            stats = json.load(file)
+        self.char = Character()
+        merged_stats = {**self.char.other_stats2,
+                         **self.char.abilities2}
+        for key,value in merged_stats.items():
+            setattr(self.char,value,stats[key])
         
-        self.char = Character(name=self.stats['name'],max_hp=self.stats['max_hp'],max_hit_dice=self.stats['max_hit_dice'])
+        
         self.root.title(self.char.name)
         self.config_lables()
         
@@ -199,10 +204,12 @@ class MkGui3:
 
         def on_done_click(): 
             for key,value in ability_widgets.items():
-                self.char.abilities[key] = value.get()
+                setattr(self.char,key,value.get())
+                # self.char.abilities[key] = value.get()
         
-            for key,value in other_widgets.items():  
-                self.char.other_stats[key] = value.get()
+            for key,value in other_widgets.items(): 
+                setattr(self.char,key,value.get())
+                # self.char.other_stats[key] = value.get()
     
             self.create_char_file()
             create_char_lvl.destroy()
@@ -210,23 +217,23 @@ class MkGui3:
         # ability scores
         ability_widgets = {} 
         row_index = 0
-        for text in self.char.abilities.keys():
+        for text,attribute in self.char.abilities2.items():
             label = tk.Label(abilities_frame, text=text)
             label.grid(row=row_index, column=0)
             entry = tk.Entry(abilities_frame, width=10)
             entry.grid(row=row_index, column=1)
-            ability_widgets[text] = entry  # Store Entry widget in the dictionary
+            ability_widgets[attribute] = entry  # Store Entry widget in the dictionary
             row_index += 1
         
         # others
         other_widgets = {} 
         row_index = 0
-        for text in self.char.other_stats.keys():
+        for text,attribute in self.char.other_stats2.items():
             label = tk.Label(other_frame, text=text)
             label.grid(row=row_index, column=0)
             entry = tk.Entry(other_frame, width=10)
             entry.grid(row=row_index, column=1)
-            other_widgets[text] = entry  # Store Entry widget in the dictionary
+            other_widgets[attribute] = entry  # Store Entry widget in the dictionary
             row_index += 1
         
         done_button = tk.Button(create_char_lvl, text='Done', command=on_done_click)
@@ -236,8 +243,13 @@ class MkGui3:
     def create_char_file(self):
         self.root.title(self.char.name)
         self.config_lables()
-        merged_stats = {**self.char.other_stats,
-                         **self.char.abilities}
+
+        merged_stats = {**self.char.other_stats2,
+                         **self.char.abilities2}
+    
+        for key,value in merged_stats.items():
+            merged_stats[key] = getattr(self.char,value)
+
         with open(folder_path+self.char.name+'.json','w') as file:
             json.dump(merged_stats, file)
         self.file_names = list_json_files(folder_path=folder_path)

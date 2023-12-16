@@ -18,6 +18,15 @@ class Character:
                           'Inteligence':self.inte,
                            'Wisdom':self.wis ,
                           'Charisma':self.cha}
+        
+        self.abilities2 = {'Strenght':'stre',
+                          'Dexterity':'dex',
+                          'Constitution':'con',
+                          'Inteligence':'inte',
+                          'Wisdom':'wis',
+                          'Charisma':'cha'}
+        
+        
                            
         # main labels - int values
         self.hp = self.max_hp
@@ -47,6 +56,23 @@ class Character:
             'Max spells prepared':self.max_prepered_spells
         }
 
+        self.other_stats2 = {
+            'Name':'name',
+            'Max Hp':'max_hp',
+            'Max Hit Dice':'max_hit_dice',
+            'Total level':'lvl',
+            'Prof. Bonus':'PB', 
+            'AC':'AC', 
+            'Initiative':'initiative', 
+            'Speed':'speed', 
+            'Attack':'atk', 
+            'Spell Attack':'sp_atk',
+            'Save DC':'DC', 
+            'Max spells prepared':'max_prepered_spells'
+        }
+
+
+        
 
         self.main_labels = {'HP':self.hp,'Hit Dice':self.hit_dice,
                             'Init':self.initiative,'Speed':self.speed,
