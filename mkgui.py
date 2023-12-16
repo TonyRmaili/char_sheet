@@ -27,7 +27,7 @@ class MkGui3:
         self.main_labels()
         self.hp_frame()
         self.buttons()
-        
+        # self.save_char()
 
     def main_labels(self):
         self.main_frame = tk.Frame(self.root)
@@ -157,11 +157,15 @@ class MkGui3:
                                           command=take_long_rest)
         self.long_rest_button.grid(row=2, column=0, pady=5)
 
-        spend_spellslot_button = ttk.Combobox(self.buttons_frame,values=self.char.spell_tiers)
+        spend_spellslot_button = ttk.Combobox(self.buttons_frame,values=self.char.spell_tiers,width=25)
         spend_spellslot_button.set("Select a Spellslot to spend") 
         spend_spellslot_button.bind("<<ComboboxSelected>>", spend_spell_slot)                        
         spend_spellslot_button.grid(row=3,column=0)
-        
+    
+    def save_char(self):
+        print(self.char.abilities)
+        print(self.char.spells_prepered)
+        print(self.char.int_values)
 
     def create_char_menu(self):
         menu = tk.Menu(self.menu_on_root, tearoff=0)
@@ -178,6 +182,7 @@ class MkGui3:
     def load_character(self,name):
         with open(file=folder_path+name+'.json') as file:
             self.stats = json.load(file)
+        
         self.char = Character(name=self.stats['name'],max_hp=self.stats['max_hp'],max_hit_dice=self.stats['max_hit_dice'])
         self.root.title(self.char.name)
         self.config_lables()
@@ -185,35 +190,56 @@ class MkGui3:
     def create_char_level(self):
         create_char_lvl = tk.Toplevel(self.root)
         create_char_lvl.title("Character Creation")
-        create_char_lvl.geometry("300x400")
+        create_char_lvl.geometry("400x450")
+        abilities_frame = tk.Frame(create_char_lvl)
+        abilities_frame.grid(row=0,column=0,sticky='w')
+        other_frame = tk.Frame(create_char_lvl)
+        other_frame.grid(row=0,column=1,sticky='w')
+        self.char = Character()
 
-        stats = ['name', 'max_hp', 'max_hit_dice']
-        entry_widgets = {} 
-
-        def on_done_click():           
-            stats = {stat: entry.get() for stat, entry in entry_widgets.items()}
-            self.create_char_file(stats)
+        def on_done_click(): 
+            for key,value in ability_widgets.items():
+                self.char.abilities[key] = value.get()
+        
+            for key,value in other_widgets.items():  
+                self.char.other_stats[key] = value.get()
+    
+            self.create_char_file()
             create_char_lvl.destroy()
 
+        # ability scores
+        ability_widgets = {} 
         row_index = 0
-        for stat in stats:
-            label = tk.Label(create_char_lvl, text=stat)
+        for text in self.char.abilities.keys():
+            label = tk.Label(abilities_frame, text=text)
             label.grid(row=row_index, column=0)
-            entry = tk.Entry(create_char_lvl, width=10)
+            entry = tk.Entry(abilities_frame, width=10)
             entry.grid(row=row_index, column=1)
-            entry_widgets[stat] = entry  # Store Entry widget in the dictionary
+            ability_widgets[text] = entry  # Store Entry widget in the dictionary
             row_index += 1
-
+        
+        # others
+        other_widgets = {} 
+        row_index = 0
+        for text in self.char.other_stats.keys():
+            label = tk.Label(other_frame, text=text)
+            label.grid(row=row_index, column=0)
+            entry = tk.Entry(other_frame, width=10)
+            entry.grid(row=row_index, column=1)
+            other_widgets[text] = entry  # Store Entry widget in the dictionary
+            row_index += 1
+        
         done_button = tk.Button(create_char_lvl, text='Done', command=on_done_click)
         done_button.grid(row=row_index, column=1, pady=10)
         create_char_lvl.wait_window()
 
-    def create_char_file(self,stats):
-        self.char = Character(name=stats['name'],max_hp=stats['max_hp'],max_hit_dice=stats['max_hit_dice']) 
+    def create_char_file(self):
         self.root.title(self.char.name)
         self.config_lables()
-        with open(folder_path+stats['name']+'.json','w') as file:
-            json.dump(stats, file)
+        merged_stats = {**self.char.other_stats,
+                         **self.char.abilities}
+        with open(folder_path+self.char.name+'.json','w') as file:
+            json.dump(merged_stats, file)
         self.file_names = list_json_files(folder_path=folder_path)
             
     def run(self):
