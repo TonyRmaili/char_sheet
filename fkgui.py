@@ -15,7 +15,57 @@ class FkGui4:
         self.root.geometry("400x300")
         self.auto_load_char()
         self._menu_setup()
+    
+    def addspell(self,name,tier):
+        self.char.addspell(name,tier)
+        self.spell_book_window.destroy()
+        self.open_spell_book()
+
+
+    def addspells_frame(self):
+        frame = tk.Frame(self.spell_book_window)
+        frame.grid(row=5,column=4,sticky='sw')
+            # button
+        addspell_btn= tk.Button(frame,text='Add Spell',
+                                    command=lambda:self.addspell(addspellname_entry,
+                                                               addspelltier_entry))
+        addspell_btn.grid(row=0,column=0,padx=10,sticky='w')
+            # entry name and label
+        addspellname_entry =tk.Entry(frame,width=20)
+        addspellname_entry.grid(row=0,column=2)
+        spellname_label = tk.Label(frame,text='Name:')
+        spellname_label.grid(row=0,column=1)
+            # tier entry and label
+        addspelltier_entry =tk.Entry(frame,width=5)
+        addspelltier_entry.grid(row=0,column=4)
+        addspelltier_labe = tk.Label(frame,text='Tier - (0-9)')
+        addspelltier_labe.grid(row=0,column=3)
+
+
+
+    def spells_know_frame(self):
+        frame = tk.Frame(self.spell_book_window)
+        frame.grid(row=0,column=0,sticky='w')
         
+        row_index = 0
+        for name,tier in self.char.spells_known.items():
+            label = tk.Label(self.spell_book_window,text=f'{name} Tier {tier}')
+            label.grid(row=row_index,column=0,sticky='w')
+            row_index +=1
+
+
+    def open_spell_book(self):
+            self.spell_book_window = tk.Toplevel(self.root)
+            self.spell_book_window.title("Spell Book")
+            self.spell_book_window.geometry("500x200")
+
+            self.spells_know_frame()
+            self.addspells_frame()
+            
+
+            
+
+
     def live_buttons(self):
         def on_heal_button():
             if self.hp_entry.get().isdigit():
@@ -36,10 +86,8 @@ class FkGui4:
         self.buttons_frame= tk.Frame(self.root)
         self.buttons_frame.grid(row=0,column=1,padx=10,sticky='w')
         #entry
-       
         self.hp_entry = tk.Entry(self.buttons_frame,width=5)
         self.hp_entry.grid(row=0,column=0)
-        
         #heal
         self.heal_button=tk.Button(self.buttons_frame,text='Heal',
                                    command=on_heal_button)
@@ -53,7 +101,8 @@ class FkGui4:
                                      command=on_hit_dice_button)
         self.hit_dice_button.grid(row=0, column=3, pady=5)
 
-
+        self.spell_book_button = tk.Button(self.buttons_frame,text='Spell Book',command=self.open_spell_book)
+        self.spell_book_button.grid(row=1,column=0)
 
     def front_page(self):
         self.main_frame = tk.Frame(self.root)

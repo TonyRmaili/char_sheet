@@ -27,6 +27,33 @@ class Character:
         self.short_rest_abilities =[]
         self.long_rest_abilities=[]
         self.gold = 0
+        self.spells_known = {}
+        self.spells_prepared = {}
+        self.spell_tiers = {'cantrip':0,'tier1':1,
+                            'tier2':2,'tier3':3,
+                            'tier4':4,'tier5':5,
+                            'tier6':6,'tier7':7,
+                            'tier8':8,'tier9':9,}
+        self.spell_slots = {}
+
+    def add_spellslot(self):
+        pass
+    
+    def remove_spellslot(self):
+        pass
+
+    def removespell(self,name):
+        self.spells_known.remove[name]
+
+    def addspell(self,name,tier):
+        name, tier= name.get() , tier.get()
+        if name =='' or tier =='':
+            raise ValueError
+        if tier.isdigit() and int(tier) in [x for x in range(10)]:
+            self.spells_known[name] = tier
+            print(self.spells_known)
+        else:
+            raise ValueError
 
     def damage(self,entry): 
         self.hp -= entry
