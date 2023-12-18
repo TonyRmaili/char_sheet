@@ -27,7 +27,14 @@ class MkGui3:
         self.main_labels()
         self.hp_frame()
         self.buttons()
-        # self.save_char()
+        
+    def save_char(self):
+        stats =self.char.merge_all_stats()
+        for key,value in stats.items():
+            stats[key] = getattr(self.char,value)
+        
+        with open(folder_path+self.char.name+'.json','w') as file:
+            json.dump(stats, file)
 
     def main_labels(self):
         self.main_frame = tk.Frame(self.root)
@@ -162,18 +169,12 @@ class MkGui3:
         spend_spellslot_button.bind("<<ComboboxSelected>>", spend_spell_slot)                        
         spend_spellslot_button.grid(row=3,column=0)
     
-    def save_char(self):
-        print(self.char.abilities)
-        print(self.char.spells_prepered)
-        print(self.char.int_values)
-
     def create_char_menu(self):
         menu = tk.Menu(self.menu_on_root, tearoff=0)
         menu.add_command(label='Create', command=self.create_char_level)
         self.menu_on_root.add_cascade(label='Create Character', menu=menu)
 
     def load_char_menu(self):
-        self.menu_on_root.delete(2, tk.END)
         menu = tk.Menu(self.menu_on_root,tearoff=0)
         for file in self.file_names:
             menu.add_command(label=file,command=lambda name=file: self.load_character(name))
@@ -183,15 +184,12 @@ class MkGui3:
         with open(file=folder_path+name+'.json') as file:
             stats = json.load(file)
         self.char = Character()
-        merged_stats = {**self.char.other_stats2,
-                         **self.char.abilities2}
+        merged_stats = self.char.merge_all_stats()
         for key,value in merged_stats.items():
             setattr(self.char,value,stats[key])
-        
-        
         self.root.title(self.char.name)
         self.config_lables()
-        
+              
     def create_char_level(self):
         create_char_lvl = tk.Toplevel(self.root)
         create_char_lvl.title("Character Creation")
@@ -241,9 +239,8 @@ class MkGui3:
         create_char_lvl.wait_window()
 
     def create_char_file(self):
-        self.root.title(self.char.name)
         self.config_lables()
-
+        self.root.title(self.char.name)
         merged_stats = {**self.char.other_stats2,
                          **self.char.abilities2}
     
@@ -256,6 +253,7 @@ class MkGui3:
             
     def run(self):
         self.root.mainloop()
+        self.save_char()
 
 if __name__ == '__main__': 
     gui = MkGui3()

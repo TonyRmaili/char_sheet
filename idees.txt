@@ -1,0 +1,7 @@
+things to implement
+
+-loot tables
+-other tables such as weather,combat,events
+-details on Character
+-dice rollers (large combat dice)
+-
