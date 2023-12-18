@@ -13,6 +13,7 @@ class FkGui4:
     def __init__(self):
         self.root = tk.Tk()
         self.root.geometry("400x300")
+        self.auto_load_char()
         self._menu_setup()
         
     def live_buttons(self):
@@ -75,6 +76,7 @@ class FkGui4:
         self.root.config(menu=self.menu_bar)
         # sub menus - filemenu
         self.character_files_menu()
+        self.front_page()
         
     def character_files_menu(self):
         self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',15),tearoff=0)
@@ -242,6 +244,19 @@ class FkGui4:
         except TypeError:
             pass
     
+    def auto_load_char(self):
+        self.file_names = list_json_files(folder_path=folder_path)
+        if self.file_names == []:
+            self.create_char_page()
+            self.file_names = list_json_files(folder_path=folder_path)
+        
+        file_index = 0
+        with open(file=folder_path+self.file_names[file_index]+'.json') as file:
+            stats = json.load(file)
+        self.char = Character()
+        for key,value in self.char.save_stats().items():
+            setattr(self.char,value,stats[key])
+        self.root.title(self.char.name)
     
     def run(self):
         self.root.mainloop()
