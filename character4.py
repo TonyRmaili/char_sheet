@@ -12,6 +12,7 @@ class Character:
         self.wis = 0
         self.cha= 0
 
+        self.temp_hp = 0
         self.hp = self.max_hp
         self.hit_dice = self.max_hit_dice
         self.lvl=1
@@ -51,12 +52,18 @@ class Character:
             raise ValueError
         if tier.isdigit() and int(tier) in [x for x in range(10)]:
             self.spells_known[name] = tier
-            print(self.spells_known)
         else:
             raise ValueError
 
+    # not correct atm
     def damage(self,entry): 
-        self.hp -= entry
+        dmg_diff = self.temp_hp - entry
+        if dmg_diff < 0:
+            self.temp_hp = 0
+            self.hp += dmg_diff
+        else:
+            self.temp_hp -= entry
+
         if self.hp < 0:
             self.hp = 0
         
@@ -73,6 +80,8 @@ class Character:
             return 'no more hit dice left'
         self.heal(5)
 
+    def add_temp_hp(self,entry):
+        self.temp_hp += entry
 
     def live_buttons_tag(self):
         return {'Gold':'gold',
@@ -109,10 +118,12 @@ class Character:
         all_stats = {**self.other_stats(),**self.ability_scores()}
         all_stats['Hp'] = 'hp'
         all_stats['Hit Dice'] = 'hit_dice'
+        all_stats['Temp Hp'] = 'temp_hp'
         return all_stats
     
     def main_labels(self):
         return {'Hp':'hp',
+                'Temp Hp':'temp_hp',
                 'Hit Dice': 'hit_dice',
                 'AC':'AC', 
                 'Save DC':'DC',

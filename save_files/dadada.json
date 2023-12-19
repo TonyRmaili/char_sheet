@@ -1,0 +1,27 @@
+{
+    "Name": "dadada",
+    "Max Hp": 112,
+    "Max Hit Dice": 5,
+    "Total level": "",
+    "Prof. Bonus": "",
+    "AC": "",
+    "Initiative": "",
+    "Speed": "",
+    "Attack": "",
+    "Spell Attack": "",
+    "Save DC": "",
+    "Max spells prepared": "",
+    "Inspiration": "",
+    "Strength": 10,
+    "Dexterity": 10,
+    "Constitution": 10,
+    "Inteligence": 10,
+    "Wisdom": 10,
+    "Charisma": 10,
+    "Hp": 112,
+    "Hit Dice": 5,
+    "Temp Hp": 10,
+    "Spells Known": {
+        "aass": "2"
+    }
+}

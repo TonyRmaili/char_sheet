@@ -21,7 +21,6 @@ class FkGui4:
         self.spell_book_window.destroy()
         self.open_spell_book()
 
-
     def addspells_frame(self):
         frame = tk.Frame(self.spell_book_window)
         frame.grid(row=5,column=4,sticky='sw')
@@ -41,31 +40,22 @@ class FkGui4:
         addspelltier_labe = tk.Label(frame,text='Tier - (0-9)')
         addspelltier_labe.grid(row=0,column=3)
 
-
-
     def spells_know_frame(self):
         frame = tk.Frame(self.spell_book_window)
         frame.grid(row=0,column=0,sticky='w')
-        
         row_index = 0
         for name,tier in self.char.spells_known.items():
             label = tk.Label(self.spell_book_window,text=f'{name} Tier {tier}')
             label.grid(row=row_index,column=0,sticky='w')
             row_index +=1
 
-
     def open_spell_book(self):
             self.spell_book_window = tk.Toplevel(self.root)
             self.spell_book_window.title("Spell Book")
             self.spell_book_window.geometry("500x200")
-
             self.spells_know_frame()
             self.addspells_frame()
             
-
-            
-
-
     def live_buttons(self):
         def on_heal_button():
             if self.hp_entry.get().isdigit():
@@ -83,26 +73,40 @@ class FkGui4:
             self.char.spend_hit_dice()
             self.update_frontpage()
 
+        def on_temp_hp_button():
+            if self.temp_hp_entry.get().isdigit():
+                entry = int(self.temp_hp_entry.get())
+                self.char.add_temp_hp(entry=entry)
+                self.update_frontpage()
+
         self.buttons_frame= tk.Frame(self.root)
         self.buttons_frame.grid(row=0,column=1,padx=10,sticky='w')
         #entry
         self.hp_entry = tk.Entry(self.buttons_frame,width=5)
-        self.hp_entry.grid(row=0,column=0)
+        self.hp_entry.grid(row=1,column=0)
         #heal
         self.heal_button=tk.Button(self.buttons_frame,text='Heal',
                                    command=on_heal_button)
-        self.heal_button.grid(row=0,column=1)
+        self.heal_button.grid(row=1,column=1)
         #damage
         self.damage_button = tk.Button(self.buttons_frame,text='Damage',
                                      command=on_damage_button)
-        self.damage_button.grid(row=0, column=2, pady=5)
+        self.damage_button.grid(row=1, column=2)
         # hit dice
         self.hit_dice_button = tk.Button(self.buttons_frame,text='Hit Dice',
                                      command=on_hit_dice_button)
-        self.hit_dice_button.grid(row=0, column=3, pady=5)
+        self.hit_dice_button.grid(row=1, column=3)
 
         self.spell_book_button = tk.Button(self.buttons_frame,text='Spell Book',command=self.open_spell_book)
-        self.spell_book_button.grid(row=1,column=0)
+        self.spell_book_button.grid(row=2,column=0)
+
+        # temp hp
+        self.temp_hp_entry = tk.Entry(self.buttons_frame,width=5)
+        self.temp_hp_entry.grid(row=0,column=0)
+
+        self.temp_hp_btn=tk.Button(self.buttons_frame,text='Add Temp Hp',
+                                   command=on_temp_hp_button)
+        self.temp_hp_btn.grid(row=0,column=1)
 
     def front_page(self):
         self.main_frame = tk.Frame(self.root)
@@ -110,7 +114,8 @@ class FkGui4:
         row_index = 0
         for label_name,attribute_name in self.char.main_labels().items():
             if label_name == 'Hp':
-                label = tk.Label(self.main_frame, text=f"HP: {self.char.hp} / {self.char.max_hp}")
+                label = tk.Label(self.main_frame,
+                                  text=f"HP: {self.char.hp} / {self.char.max_hp}")
                 label.grid(row=row_index,column=0,sticky='w')
                 row_index += 1
             else:
@@ -143,13 +148,15 @@ class FkGui4:
         self.char_menu.add_cascade(label='Load',menu=self.load_chars)
         
     def load_char(self,name):
+        self.save_char()
         with open(file=folder_path+name+'.json') as file:
             stats = json.load(file)
         self.char = Character()
         for key,value in self.char.save_stats().items():
             setattr(self.char,value,stats[key])
+        self.char.spells_known = stats['Spells Known'] 
         self.root.title(self.char.name)
-        self.front_page()
+        self.update_frontpage()
 
     def update_frontpage(self):
         try:
@@ -279,10 +286,9 @@ class FkGui4:
             for key,value in self.char.save_stats().items():
                 stat=getattr(self.char,value)
                 all_stats[key] = stat
-
+            all_stats['Spells Known'] = self.char.spells_known
             with open(folder_path+self.char.name+'.json','w') as file:
-                json.dump(all_stats, file)
-        
+                json.dump(all_stats, file,indent=4)
             self.menu_bar.destroy()
             self._menu_setup()
             self.root.config(menu=self.menu_bar)
@@ -298,13 +304,13 @@ class FkGui4:
         if self.file_names == []:
             self.create_char_page()
             self.file_names = list_json_files(folder_path=folder_path)
-        
         file_index = 0
         with open(file=folder_path+self.file_names[file_index]+'.json') as file:
             stats = json.load(file)
         self.char = Character()
         for key,value in self.char.save_stats().items():
             setattr(self.char,value,stats[key])
+        self.char.spells_known = stats['Spells Known'] 
         self.root.title(self.char.name)
     
     def run(self):
