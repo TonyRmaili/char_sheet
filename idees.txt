@@ -1,7 +1,24 @@
 things to implement
 
--loot tables
--other tables such as weather,combat,events
--details on Character
+
+GM -tools
+-tables such as weather,combat,events,loot
 -dice rollers (large combat dice)
--
+-search monster stat block via value ; name,CR etc
+
+
+Player tools
+-all details from Character
+-tab for inventory
+-tab for notes
+-import token/picture
+-pets stat block
+
+Other functions
+- API to create char with an url
+- Data storage ; json vs SQL vs SQLite vs exel
+
+AI implementation
+-generate monster statblock, item, etc
+
+

@@ -1,7 +1,7 @@
 {
-    "Name": "dadada",
-    "Max Hp": 100,
-    "Max Hit Dice": 5,
+    "Name": "qad",
+    "Max Hp": 34,
+    "Max Hit Dice": "",
     "Total level": "",
     "Prof. Bonus": "",
     "AC": "",
@@ -12,16 +12,14 @@
     "Save DC": "",
     "Max spells prepared": "",
     "Inspiration": "",
-    "Strength": 10,
+    "Strength": 12,
     "Dexterity": 10,
     "Constitution": 10,
     "Inteligence": 10,
     "Wisdom": 10,
     "Charisma": 10,
-    "Hp": 100,
-    "Hit Dice": 5,
-    "Temp Hp": 10,
-    "Spells Known": {
-        "aass": "2"
-    }
+    "Hp": 34,
+    "Hit Dice": "",
+    "Temp Hp": 0,
+    "Spells Known": {}
 }

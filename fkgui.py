@@ -130,7 +130,7 @@ class FkGui4:
         self.root.config(menu=self.menu_bar)
         # sub menus - filemenu
         self.character_files_menu()
-        self.front_page()
+        self.update_frontpage()
         
     def character_files_menu(self):
         self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',15),tearoff=0)

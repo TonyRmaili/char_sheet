@@ -1,6 +1,6 @@
 {
     "Name": "tatata",
-    "Max Hp": 34,
+    "Max Hp": 1000,
     "Max Hit Dice": 3,
     "Total level": "",
     "Prof. Bonus": "",
@@ -9,7 +9,7 @@
     "Speed": "",
     "Attack": "",
     "Spell Attack": "",
-    "Save DC": "",
+    "Save DC": 5,
     "Max spells prepared": "",
     "Inspiration": "",
     "Strength": 10,
@@ -18,11 +18,12 @@
     "Inteligence": 10,
     "Wisdom": 10,
     "Charisma": 10,
-    "Hp": 10,
+    "Hp": 1000,
     "Hit Dice": 3,
-    "Temp Hp": 0,
+    "Temp Hp": 20,
     "Spells Known": {
         "dfdf": "4",
-        "ddf": "5"
+        "ddf": "5",
+        "sdsdsdsw": "4"
     }
 }

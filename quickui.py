@@ -1,40 +1,22 @@
 import tkinter as tk
 
-def dummy_command():
-    print("This is a dummy command.")
+def update_label_text():
+    new_text = entry.get()
+    label.config(text=new_text)
 
-def main():
-    root = tk.Tk()
-    root.title("Cascading Menus Example")
+root = tk.Tk()
+root.title("Dynamic Label Text")
 
-    # Create the menu bar
-    menubar = tk.Menu(root)
+label_frame = tk.LabelFrame(root, text="Label Frame")
+label_frame.pack(padx=10, pady=10)
 
-    # Create the File menu
-    file_menu = tk.Menu(menubar, tearoff=0)
-    file_menu.add_command(label="New", command=dummy_command)
-    file_menu.add_command(label="Open", command=dummy_command)
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.destroy)
-    menubar.add_cascade(label="File", menu=file_menu)
+label = tk.Label(label_frame, text="Dynamic Text", wraplength=150,width=2)
+label.pack(padx=10, pady=10)
 
-    # Create the Edit menu
-    edit_menu = tk.Menu(menubar, tearoff=0)
-    edit_menu.add_command(label="Cut", command=dummy_command)
-    edit_menu.add_command(label="Copy", command=dummy_command)
-    edit_menu.add_command(label="Paste", command=dummy_command)
-    menubar.add_cascade(label="Edit", menu=edit_menu)
+entry = tk.Entry(root)
+entry.pack(pady=10)
 
-    # Create a submenu for Edit menu
-    sub_menu = tk.Menu(edit_menu, tearoff=0)
-    sub_menu.add_command(label="Subcommand 1", command=dummy_command)
-    sub_menu.add_command(label="Subcommand 2", command=dummy_command)
-    edit_menu.add_cascade(label="Submenu", menu=sub_menu)
+update_button = tk.Button(root, text="Update Label Text", command=update_label_text)
+update_button.pack(pady=10)
 
-    # Configure the root window to use the menu bar
-    root.config(menu=menubar)
-
-    root.mainloop()
-
-if __name__ == "__main__":
-    main()
+root.mainloop()

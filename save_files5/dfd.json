@@ -1,7 +1,7 @@
 {
-    "Name": "dadada",
-    "Max Hp": 100,
-    "Max Hit Dice": 5,
+    "Name": "dfd",
+    "Max Hp": 4545454,
+    "Max Hit Dice": "",
     "Total level": "",
     "Prof. Bonus": "",
     "AC": "",
@@ -18,10 +18,8 @@
     "Inteligence": 10,
     "Wisdom": 10,
     "Charisma": 10,
-    "Hp": 100,
-    "Hit Dice": 5,
-    "Temp Hp": 10,
-    "Spells Known": {
-        "aass": "2"
-    }
+    "Hp": 4545454,
+    "Hit Dice": "",
+    "Temp Hp": 0,
+    "Spells Known": {}
 }
