@@ -1,10 +1,18 @@
+import math
+
+
+
+
+
+
+
 class Character:
     def __init__(self,name=None,max_hp=None,max_hit_dice=None):
         self.name = name
         self.max_hp = max_hp
         self.max_hit_dice = max_hit_dice
         self.inspiration = 0
-        # ability score - int values
+        # # ability score - int values
         self.stre= 0
         self.dex = 0
         self.con = 0
@@ -37,14 +45,16 @@ class Character:
                             'tier8':8,'tier9':9,}
         self.spell_slots = {}
 
-    def add_spellslot(self):
-        pass
-    
-    def remove_spellslot(self):
-        pass
+    def take_short_rest(self):
+        self.hit_dice += math.ceil(self.max_hit_dice / 2)
+        if self.hit_dice > self.max_hit_dice:
+            self.hit_dice = self.max_hit_dice
 
-    def removespell(self,name):
-        self.spells_known.remove[name]
+    def take_long_rest(self):
+        self.hp = self.max_hp
+        self.hit_dice = self.max_hit_dice
+        self.temp_hp = 0
+
 
     def addspell(self,name,tier):
         name, tier= name.get() , tier.get()
@@ -121,7 +131,7 @@ class Character:
         all_stats['Temp Hp'] = 'temp_hp'
         return all_stats
     
-    def combat_labels(self):
+    def main_labels(self):
         return {'Hp':'hp',
                 'Temp Hp':'temp_hp',
                 'Hit Dice': 'hit_dice',
@@ -132,4 +142,11 @@ class Character:
                 'Initiative':'initiative',
                 'Speed':'speed',
                 'Prof. Bonus':'PB'}
-                     
+    
+    def combat_stats(self):
+        return {'AC':'AC', 
+                'Save DC':'DC',
+                'Attack':'atk',
+                'Spell Attack':'sp_atk',
+                'Initiative':'initiative',
+                'Speed':'speed' }

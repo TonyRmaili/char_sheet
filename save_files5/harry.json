@@ -1,7 +1,7 @@
 {
-    "Name": "dfd",
-    "Max Hp": 4545454,
-    "Max Hit Dice": "",
+    "Name": "harry",
+    "Max Hp": 34,
+    "Max Hit Dice": 7,
     "Total level": "",
     "Prof. Bonus": "",
     "AC": "",
@@ -18,8 +18,8 @@
     "Inteligence": 10,
     "Wisdom": 10,
     "Charisma": 10,
-    "Hp": 4545454,
-    "Hit Dice": "",
+    "Hp": 34,
+    "Hit Dice": 7,
     "Temp Hp": 0,
     "Spells Known": {}
 }
