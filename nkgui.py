@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import json,os
 from character5 import Character
 
@@ -110,43 +111,69 @@ class FkGui4:
         self.char.spells_known = stats['Spells Known'] 
         self.root.title(self.char.name)
     
-    def addspell(self,name,tier):
-        self.char.addspell(name,tier)
-        self.spell_book_window.destroy()
-        self.open_spell_book()
-
     def addspells_frame(self):
-        frame = tk.Frame(self.spell_book_window)
-        frame.grid(row=5,column=4,sticky='sw')
-            # button
+        def addspell():
+            self.char.addspell(addspellname_entry.get(),addspelltier_entry.get())
+            self.spell_book_window.destroy()
+            self.open_spell_book()
+
+        frame = tk.LabelFrame(self.spell_book_window,text='Edit Spells and Slots')
+        frame.grid(row=1,column=0,padx=10,sticky='news')
+            # spells-  button
         addspell_btn= tk.Button(frame,text='Add Spell',
-                                    command=lambda:self.addspell(addspellname_entry,
-                                                               addspelltier_entry))
-        addspell_btn.grid(row=0,column=0,padx=10,sticky='w')
+                                    command=addspell)
+                                                               
+        addspell_btn.grid(row=0,column=3,padx=10,sticky='w')
             # entry name and label
-        addspellname_entry =tk.Entry(frame,width=20)
-        addspellname_entry.grid(row=0,column=2)
-        spellname_label = tk.Label(frame,text='Name:')
-        spellname_label.grid(row=0,column=1)
-            # tier entry and label
-        addspelltier_entry =tk.Entry(frame,width=5)
-        addspelltier_entry.grid(row=0,column=4)
-        addspelltier_labe = tk.Label(frame,text='Tier - (0-9)')
-        addspelltier_labe.grid(row=0,column=3)
+        spellname_label = tk.Label(frame,text='Spell Name')
+        spellname_label.grid(row=0,column=0)
+        addspellname_entry =tk.Entry(frame,width=15)
+        addspellname_entry.grid(row=0,column=1)
+        
+            # tier entry 
+        addspelltier_entry = ttk.Combobox(frame,width=5,
+                                          values=list(self.char.spell_tiers.keys()))
+                                         
+        addspelltier_entry.grid(row=0,column=2)
+       
+
+        # slots - button
+        def spells_slots():
+            tiers = []
+            for tier in self.char.spell_tiers.keys():
+                if tier == 'cantrip':
+                    pass
+                else:
+                    tiers.append(tier)
+            return tiers
+
+        def add_slots():
+            self.char.add_spellslot(spellslot_tier.get(),int(slot_amount.get()))
+
+        slots_lb = tk.Label(frame,text='Spell Slots')
+        slots_lb.grid(row=1,column=0)
+        spellslot_tier= ttk.Combobox(frame,values=spells_slots(),width=5)
+                                    
+        spellslot_tier.grid(row=1,column=1,padx=10,sticky='w')
+
+        slot_amount = tk.Spinbox(frame, from_=1, to='infinity',width=5)
+        slot_amount.grid(row=1,column=2)
+
+        add_slots_btn = tk.Button(frame,text='Add Slots',command=add_slots)
+        add_slots_btn.grid(row=1,column=3)
 
     def spells_know_frame(self):
-        frame = tk.Frame(self.spell_book_window)
-        frame.grid(row=0,column=0,sticky='w')
+        frame = tk.LabelFrame(self.spell_book_window,text='Spells Known')
+        frame.grid(row=0,column=0,padx=10,pady=10,sticky='wsn')
         row_index = 0
-        for name,tier in self.char.spells_known.items():
-            label = tk.Label(self.spell_book_window,text=f'{name} Tier {tier}')
-            label.grid(row=row_index,column=0,sticky='w')
+        for tier,name in self.char.spells_known.items():
+            label = tk.Label(frame,text=f'{name} {tier}')
+            label.grid(row=row_index,column=0,padx=5,pady=5,sticky='w')
             row_index +=1
 
     def open_spell_book(self):
             self.spell_book_window = tk.Toplevel(self.root)
             self.spell_book_window.title("Spell Book")
-            self.spell_book_window.geometry("500x200")
             self.spells_know_frame()
             self.addspells_frame()
 
@@ -247,8 +274,12 @@ class FkGui4:
         for widget in self.buttons_frame.winfo_children():
             widget.grid_configure(sticky='news')
 
-    
-    
+    def spells_frame(self):
+        self.spells_fr = tk.LabelFrame(self.root_frame,text='Spells')
+        self.spells_fr.grid(row=1,column=1,padx=10,pady=10,sticky='nsew')
+
+        use_spellslot_btn = tk.Button(self.spells_fr,text='Use Spellslot')
+        use_spellslot_btn.grid(row=0,column=0)
 
     def front_page(self):
         self.main_frame = tk.LabelFrame(self.root_frame,text='Combat Stats')
@@ -260,24 +291,16 @@ class FkGui4:
             label.grid(row=row_index,column=0)
             row_index += 1
         self.live_buttons()
+        self.spells_frame()
         
-       
     def _menu_setup(self):
         self.menu_bar = tk.Menu(self.root)
         self.root.config(menu=self.menu_bar)
         # sub menus - filemenu
         self.character_files_menu()
-        self.char_details_menu()
+       
         self.update_frontpage()
-    
-    def char_details_menu(self):
-        def test():
-            print('test')
-
-        details_menu = tk.Menu(self.menu_bar,tearoff=0)    
-        details_menu.add_command(command=test)
-        self.menu_bar.add_cascade(label='Details',menu=details_menu)
-        
+         
     def character_files_menu(self):
         self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',15),tearoff=0)
         self.char_menu.add_command(label='Create',command=self.create_char_page)
@@ -369,8 +392,6 @@ class FkGui4:
         done_button = tk.Button(self.update_page, text='Done', command=on_done_click)
         done_button.grid(row=row_index, column=1, pady=10)
         self.update_page.wait_window()
-
-
 
     def run(self):
         self.root.mainloop()

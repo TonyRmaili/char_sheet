@@ -42,28 +42,30 @@ class Character:
                             'tier2':2,'tier3':3,
                             'tier4':4,'tier5':5,
                             'tier6':6,'tier7':7,
-                            'tier8':8,'tier9':9,}
-        self.spell_slots = {}
+                            'tier8':8,'tier9':9}
+        
+        self.spell_slots = {'tier1':0,'tier2':0,'tier3':0,
+                            'tier4':0,'tier5':0,'tier6':0,'tier7':0,
+                            'tier8':0,'tier9':0}
+    
+    
+
+    def add_spellslot(self,slot,amount):
+        self.spell_slots[slot] += amount
+        
 
     def take_short_rest(self):
+        print('taking short rest')
+
+    def take_long_rest(self):
+        self.hp = self.max_hp
+        self.temp_hp = 0
         self.hit_dice += math.ceil(self.max_hit_dice / 2)
         if self.hit_dice > self.max_hit_dice:
             self.hit_dice = self.max_hit_dice
 
-    def take_long_rest(self):
-        self.hp = self.max_hp
-        self.hit_dice = self.max_hit_dice
-        self.temp_hp = 0
-
-
     def addspell(self,name,tier):
-        name, tier= name.get() , tier.get()
-        if name =='' or tier =='':
-            raise ValueError
-        if tier.isdigit() and int(tier) in [x for x in range(10)]:
-            self.spells_known[name] = tier
-        else:
-            raise ValueError
+        self.spells_known[tier] = name
 
     # not correct atm
     def damage(self,entry): 
@@ -98,7 +100,6 @@ class Character:
                 'Hp':'hp',
                 'Hit Dice': 'hit_dice'}
 
-
     def ability_scores(self):
         return {'Strength':'stre',
                 'Dexterity':'dex',
@@ -130,19 +131,7 @@ class Character:
         all_stats['Hit Dice'] = 'hit_dice'
         all_stats['Temp Hp'] = 'temp_hp'
         return all_stats
-    
-    def main_labels(self):
-        return {'Hp':'hp',
-                'Temp Hp':'temp_hp',
-                'Hit Dice': 'hit_dice',
-                'AC':'AC', 
-                'Save DC':'DC',
-                'Attack':'atk',
-                'Spell Attack':'sp_atk',
-                'Initiative':'initiative',
-                'Speed':'speed',
-                'Prof. Bonus':'PB'}
-    
+   
     def combat_stats(self):
         return {'AC':'AC', 
                 'Save DC':'DC',
@@ -150,3 +139,16 @@ class Character:
                 'Spell Attack':'sp_atk',
                 'Initiative':'initiative',
                 'Speed':'speed' }
+
+     
+    # def main_labels(self):
+    #     return {'Hp':'hp',
+    #             'Temp Hp':'temp_hp',
+    #             'Hit Dice': 'hit_dice',
+    #             'AC':'AC', 
+    #             'Save DC':'DC',
+    #             'Attack':'atk',
+    #             'Spell Attack':'sp_atk',
+    #             'Initiative':'initiative',
+    #             'Speed':'speed',
+    #             'Prof. Bonus':'PB'}

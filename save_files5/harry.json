@@ -1,12 +1,12 @@
 {
     "Name": "harry",
-    "Max Hp": 34,
+    "Max Hp": 45,
     "Max Hit Dice": 7,
     "Total level": "",
     "Prof. Bonus": "",
     "AC": "",
     "Initiative": "",
-    "Speed": "",
+    "Speed": 4,
     "Attack": "",
     "Spell Attack": "",
     "Save DC": "",
@@ -18,8 +18,15 @@
     "Inteligence": 10,
     "Wisdom": 10,
     "Charisma": 10,
-    "Hp": 34,
+    "Hp": 45,
     "Hit Dice": 7,
     "Temp Hp": 0,
-    "Spells Known": {}
+    "Spells Known": {
+        "fba": "2",
+        "ghgh": "3",
+        "dsfedf": "4",
+        "tier3": "sdsd",
+        "tier2": "dfdf",
+        "tier9": "22232"
+    }
 }
