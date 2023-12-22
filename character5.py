@@ -44,15 +44,34 @@ class Character:
                             'tier6':6,'tier7':7,
                             'tier8':8,'tier9':9}
         
-        self.spell_slots = {'tier1':0,'tier2':0,'tier3':0,
-                            'tier4':0,'tier5':0,'tier6':0,'tier7':0,
-                            'tier8':0,'tier9':0}
+        # self.spell_slots = {'tier1':0,'tier2':0,'tier3':0,
+        #                     'tier4':0,'tier5':0,'tier6':0,'tier7':0,
+        #                     'tier8':0,'tier9':0}
+        
+        self.spell_slots = {'tier1':{'max':0,'current':0},
+                            'tier2':{'max':0,'current':0},
+                            'tier3':{'max':0,'current':0},
+                            'tier4':{'max':0,'current':0},
+                            'tier5':{'max':0,'current':0},
+                            'tier6':{'max':0,'current':0},
+                            'tier7':{'max':0,'current':0},
+                            'tier8':{'max':0,'current':0},
+                            'tier9':{'max':0,'current':0}
+                            }
     
-    
+    def spend_slot(self,tier):
+        self.spell_slots[tier]['current'] -=1
+        if self.spell_slots[tier]['current'] <= 0:
+            self.spell_slots[tier]['current'] = 0
+        
+    def regain_slot(self,tier):
+        self.spell_slots[tier]['current'] +=1
+        if self.spell_slots[tier]['current'] > self.spell_slots[tier]['max']:
+            self.spell_slots[tier]['current'] = self.spell_slots[tier]['max']
 
     def add_spellslot(self,slot,amount):
-        self.spell_slots[slot] += amount
-        
+        self.spell_slots[slot]['max'] += amount
+        print(self.spell_slots)
 
     def take_short_rest(self):
         print('taking short rest')
@@ -63,6 +82,9 @@ class Character:
         self.hit_dice += math.ceil(self.max_hit_dice / 2)
         if self.hit_dice > self.max_hit_dice:
             self.hit_dice = self.max_hit_dice
+
+        for tier in self.spell_slots.values():
+            tier['current'] = tier['max']
 
     def addspell(self,name,tier):
         self.spells_known[tier] = name

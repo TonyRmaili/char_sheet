@@ -1,0 +1,65 @@
+{
+    "Name": "beth",
+    "Max Hp": 34,
+    "Max Hit Dice": 3,
+    "Total level": "",
+    "Prof. Bonus": "",
+    "AC": "",
+    "Initiative": "",
+    "Speed": "",
+    "Attack": "",
+    "Spell Attack": "",
+    "Save DC": "",
+    "Max spells prepared": "",
+    "Inspiration": "",
+    "Strength": 10,
+    "Dexterity": 10,
+    "Constitution": 10,
+    "Inteligence": 10,
+    "Wisdom": 10,
+    "Charisma": 10,
+    "Hp": 34,
+    "Hit Dice": 3,
+    "Temp Hp": 0,
+    "Spells Known": {
+        "tier1": "dfdf"
+    },
+    "Spell Slots": {
+        "tier1": {
+            "max": 4,
+            "current": 4
+        },
+        "tier2": {
+            "max": 3,
+            "current": 3
+        },
+        "tier3": {
+            "max": 2,
+            "current": 2
+        },
+        "tier4": {
+            "max": 0,
+            "current": 0
+        },
+        "tier5": {
+            "max": 0,
+            "current": 0
+        },
+        "tier6": {
+            "max": 0,
+            "current": 0
+        },
+        "tier7": {
+            "max": 0,
+            "current": 0
+        },
+        "tier8": {
+            "max": 0,
+            "current": 0
+        },
+        "tier9": {
+            "max": 0,
+            "current": 0
+        }
+    }
+}

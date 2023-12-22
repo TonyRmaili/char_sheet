@@ -85,6 +85,7 @@ class FkGui4:
                 stat=getattr(self.char,value)
                 all_stats[key] = stat
             all_stats['Spells Known'] = self.char.spells_known
+            all_stats['Spell Slots'] = self.char.spell_slots
             with open(folder_path+self.char.name+'.json','w') as file:
                 json.dump(all_stats, file,indent=4)
             self.menu_bar.destroy()
@@ -109,6 +110,7 @@ class FkGui4:
         for key,value in self.char.save_stats().items():
             setattr(self.char,value,stats[key])
         self.char.spells_known = stats['Spells Known'] 
+        self.char.spell_slots = stats['Spell Slots']
         self.root.title(self.char.name)
     
     def addspells_frame(self):
@@ -116,6 +118,7 @@ class FkGui4:
             self.char.addspell(addspellname_entry.get(),addspelltier_entry.get())
             self.spell_book_window.destroy()
             self.open_spell_book()
+            
 
         frame = tk.LabelFrame(self.spell_book_window,text='Edit Spells and Slots')
         frame.grid(row=1,column=0,padx=10,sticky='news')
@@ -149,6 +152,7 @@ class FkGui4:
 
         def add_slots():
             self.char.add_spellslot(spellslot_tier.get(),int(slot_amount.get()))
+            self.update_frontpage()
 
         slots_lb = tk.Label(frame,text='Spell Slots')
         slots_lb.grid(row=1,column=0)
@@ -214,6 +218,7 @@ class FkGui4:
             hit_dice_lb.config(text=f'Hit Dice {self.char.hit_dice}/{self.char.max_hit_dice}') 
             hp_lb.config(text=f'HP {self.char.hp}/{self.char.max_hp}')
             temp_hp_lb.config(text=f'Temp HP {self.char.temp_hp}')
+            self.update_frontpage()
 
         self.buttons_frame= tk.LabelFrame(self.root_frame,text=f'Gameplay Box')
         self.buttons_frame.grid(row=0,column=1,padx=10,sticky='new')
@@ -275,11 +280,79 @@ class FkGui4:
             widget.grid_configure(sticky='news')
 
     def spells_frame(self):
-        self.spells_fr = tk.LabelFrame(self.root_frame,text='Spells')
-        self.spells_fr.grid(row=1,column=1,padx=10,pady=10,sticky='nsew')
+        # slots frame
+          
+        self.spells_fr = tk.LabelFrame(self.root_frame,text='Spell Slots')
+        self.spells_fr.grid(row=1,column=0,padx=10,pady=10,sticky='nsew')
+        row_index = 0
+        separator =0
+        x, y, radius = 10, 10, 7
+        for tier,slots in self.char.spell_slots.items():
+            if slots['max'] ==0:
+                pass
+            else:
+                frame = tk.LabelFrame(self.spells_fr,text=f'{tier}')
+                frame.grid(row=row_index,column=0,sticky='news')
+                # i = slots['current']
+                canvas = tk.Canvas(frame,height=20,width=100)
+                canvas.grid(row=row_index,column=0)
+                
+                for red_circle in range(slots['current']):
+                    canvas.create_oval(x-radius+separator, y-radius,
+                                        x+radius+separator, y+radius,outline='black',fill='red')
+                    separator += 20
+                for white_circle in range((slots['max']-slots['current'])):
+                    canvas.create_oval(x-radius+separator, y-radius,
+                                        x+radius+separator, y+radius,outline='black',fill='white')
+                    separator += 20
 
-        use_spellslot_btn = tk.Button(self.spells_fr,text='Use Spellslot')
-        use_spellslot_btn.grid(row=0,column=0)
+                canvas.config(width=x+radius+separator+5)
+                separator =0
+                row_index +=1
+
+       
+        # manage slots frame
+        def spells_slots():
+            tiers = []
+            for tier in self.char.spell_tiers.keys():
+                if tier == 'cantrip':
+                    pass
+                else:
+                    tiers.append(tier)
+            return tiers
+        
+        def spend_slot():
+            self.char.spend_slot(use_slot_entry.get())
+            self.update_frontpage()
+
+        def regain_slot():
+            self.char.regain_slot(regain_slot_entry.get())
+            self.update_frontpage()
+
+        self.manage_slots_fr = tk.LabelFrame(self.root_frame,text='Manage Slots')
+        self.manage_slots_fr.grid(row=1,column=1,padx=10,pady=10,sticky='nsew')
+
+        use_slot_lb = tk.Label(self.manage_slots_fr,text='Spend Slot')
+        use_slot_lb.grid(row=0,column=0)
+
+        use_slot_entry = ttk.Combobox(self.manage_slots_fr,width=5,
+                                          values=spells_slots())
+        use_slot_entry.grid(row=1,column=0)
+
+        use_slot_btn = tk.Button(self.manage_slots_fr,text='Cast'
+                                  ,command=spend_slot)
+        use_slot_btn.grid(row=2,column=0)
+        
+        regain_slot_lb = tk.Label(self.manage_slots_fr,text='Regain Slot')
+        regain_slot_lb.grid(row=0,column=1)
+
+        regain_slot_entry = ttk.Combobox(self.manage_slots_fr,width=5,
+                                          values=spells_slots())
+        regain_slot_entry.grid(row=1,column=1)
+
+        regain_slot_btn = tk.Button(self.manage_slots_fr,text='Evocate'
+                                    ,command=regain_slot)
+        regain_slot_btn.grid(row=2,column=1)
 
     def front_page(self):
         self.main_frame = tk.LabelFrame(self.root_frame,text='Combat Stats')
@@ -324,6 +397,7 @@ class FkGui4:
         for key,value in self.char.save_stats().items():
             setattr(self.char,value,stats[key])
         self.char.spells_known = stats['Spells Known'] 
+        self.char.spell_slots = stats['Spell Slots']
         self.root.title(self.char.name)
         self.update_frontpage()
 

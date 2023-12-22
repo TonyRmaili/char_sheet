@@ -1,22 +1,33 @@
 import tkinter as tk
 
-def update_label_text():
-    new_text = entry.get()
-    label.config(text=new_text)
+def draw_circle(canvas):
+    # Center coordinates and radius of the circle
+    x, y, radius = 50, 50, 7
+    
+    # Draw the circle on the canvas
+    return canvas.create_oval(x-radius, y-radius, x+radius, y+radius, fill="blue")
 
+def toggle_circle(canvas, circle_id):
+    # Toggle the visibility of the circle
+    current_state = canvas.itemcget(circle_id, "state")
+    new_state = "hidden" if current_state == "normal" else "normal"
+    canvas.itemconfigure(circle_id, state=new_state)
+
+# Create the main window
 root = tk.Tk()
-root.title("Dynamic Label Text")
+root.title("Toggle Circle")
 
-label_frame = tk.LabelFrame(root, text="Label Frame")
-label_frame.pack(padx=10, pady=10)
+# Create a canvas widget
+canvas = tk.Canvas(root, width=100, height=100, bg="red")
+canvas.pack()
 
-label = tk.Label(label_frame, text="Dynamic Text", wraplength=150,width=2)
-label.pack(padx=10, pady=10)
+# Draw the initial circle on the canvas
+circle_id = draw_circle(canvas)
 
-entry = tk.Entry(root)
-entry.pack(pady=10)
+# Create a button to toggle the circle
+toggle_button = tk.Button(root, text="Toggle Circle", command=lambda: toggle_circle(canvas, circle_id))
+toggle_button.pack()
 
-update_button = tk.Button(root, text="Update Label Text", command=update_label_text)
-update_button.pack(pady=10)
-
+# Start the Tkinter event loop
 root.mainloop()
+
