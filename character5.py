@@ -1,11 +1,5 @@
 import math
 
-
-
-
-
-
-
 class Character:
     def __init__(self,name=None,max_hp=None,max_hit_dice=None):
         self.name = name
@@ -44,10 +38,6 @@ class Character:
                             'tier6':6,'tier7':7,
                             'tier8':8,'tier9':9}
         
-        # self.spell_slots = {'tier1':0,'tier2':0,'tier3':0,
-        #                     'tier4':0,'tier5':0,'tier6':0,'tier7':0,
-        #                     'tier8':0,'tier9':0}
-        
         self.spell_slots = {'tier1':{'max':0,'current':0},
                             'tier2':{'max':0,'current':0},
                             'tier3':{'max':0,'current':0},
@@ -58,6 +48,47 @@ class Character:
                             'tier8':{'max':0,'current':0},
                             'tier9':{'max':0,'current':0}
                             }
+        
+        self.saving_throws = {
+                'stre':False,
+                'dex':False,
+                'con':False,
+                'inte':False,
+                'wis':False,
+                'cha':False}
+        
+        self.skills = {'Acrobatics': False,
+                        'Animal Handling': False,
+                        'Arcana': False,
+                        'Athletics': False,
+                        'Deception': False,
+                        'History': False,
+                        'Insight': False,
+                        'Intimidation': False,
+                        'Investigation': False,
+                        'Medicine': False,
+                        'Nature': False,
+                        'Perception': False,
+                        'Performance': False,
+                        'Persuasion': False,
+                        'Religion': False,
+                        'Sleight of Hand': False,
+                        'Stealth': False, 
+                        'Survival': False}
+        
+    def ability_mod(self):
+        abs_mod = []
+        for attribute in self.ability_scores().values():
+            mod = getattr(self,attribute)
+            if mod >= 10:
+                mod = int((mod-10)/2)
+                abs_mod.append(mod)        
+            elif mod < 10:
+                mod = int((mod-10)/2 -0.5)
+                abs_mod.append(mod)
+        return abs_mod
+        
+        
     
     def spend_slot(self,tier):
         self.spell_slots[tier]['current'] -=1
@@ -162,15 +193,7 @@ class Character:
                 'Initiative':'initiative',
                 'Speed':'speed' }
 
-     
-    # def main_labels(self):
-    #     return {'Hp':'hp',
-    #             'Temp Hp':'temp_hp',
-    #             'Hit Dice': 'hit_dice',
-    #             'AC':'AC', 
-    #             'Save DC':'DC',
-    #             'Attack':'atk',
-    #             'Spell Attack':'sp_atk',
-    #             'Initiative':'initiative',
-    #             'Speed':'speed',
-    #             'Prof. Bonus':'PB'}
+
+ch = Character()
+
+ch.ability_mod()

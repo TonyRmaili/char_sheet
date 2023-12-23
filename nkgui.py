@@ -86,6 +86,8 @@ class FkGui4:
                 all_stats[key] = stat
             all_stats['Spells Known'] = self.char.spells_known
             all_stats['Spell Slots'] = self.char.spell_slots
+            all_stats['Saving Throws'] = self.char.saving_throws
+            all_stats['Skills'] = self.char.skills
             with open(folder_path+self.char.name+'.json','w') as file:
                 json.dump(all_stats, file,indent=4)
             self.menu_bar.destroy()
@@ -111,6 +113,8 @@ class FkGui4:
             setattr(self.char,value,stats[key])
         self.char.spells_known = stats['Spells Known'] 
         self.char.spell_slots = stats['Spell Slots']
+        self.char.saving_throws=stats['Saving Throws'] 
+        self.char.skills = stats['Skills'] 
         self.root.title(self.char.name)
     
     def addspells_frame(self):
@@ -182,7 +186,48 @@ class FkGui4:
             self.addspells_frame()
 
     def open_details_page(self):
-        print('dt btn')
+        self.details_page = tk.Toplevel(self.root)
+        self.details_page.title("Character Details")
+
+        ability_score_fr = tk.LabelFrame(self.details_page,text='Ability Scores')
+        ability_score_fr.grid(row=0,column=0,padx=10,pady=10)
+
+        saving_throws_fr = tk.LabelFrame(self.details_page,text='Saving Throws')
+        saving_throws_fr.grid(row=0,column=1)
+
+        skills_fr = tk.LabelFrame(self.details_page,text='Skills')
+        skills_fr.grid(row=0,column=2)
+
+        short_rest_skills_fr = tk.LabelFrame(self.details_page,text='Short Rest Skills')
+        short_rest_skills_fr.grid(row=1,column=0)
+
+        long_rest_skills_fr = tk.LabelFrame(self.details_page,text='Long Rest Skills')
+        long_rest_skills_fr.grid(row=1,column=1)
+
+        spells_know_fr = tk.LabelFrame(self.details_page,text='Spells Known')
+        spells_know_fr.grid(row=2,column=0)
+
+        def ability_scores():
+            row_index = 0
+            for text,attribute in self.char.ability_scores().items():
+                label = tk.Label(ability_score_fr, text=f'{text} {getattr(self.char,attribute)}')
+                label.grid(row=row_index, column=0)
+                row_index += 1
+
+        def saving_throws():
+            pass
+
+        def short_rest_skills():
+            pass
+
+        def long_rest_skills():
+            pass
+
+        def skills():
+            pass
+
+        ability_scores()
+
 
     def live_buttons(self):
         def on_heal_button():
@@ -398,6 +443,8 @@ class FkGui4:
             setattr(self.char,value,stats[key])
         self.char.spells_known = stats['Spells Known'] 
         self.char.spell_slots = stats['Spell Slots']
+        self.char.saving_throws=stats['Saving Throws'] 
+        self.char.skills = stats['Skills'] 
         self.root.title(self.char.name)
         self.update_frontpage()
 
@@ -415,56 +462,77 @@ class FkGui4:
             try:
                 for key,value in ability_widgets.items():
                     try:
-                        setattr(self.char,key,int(value.get()))
+                        setattr(self.char,key,int(value[0].get()))
                     except ValueError:
                         pass
+                    self.char.saving_throws[key] = value[1].get()
+
+                
                 for key,value in other_widgets.items():
-                    
                     try:
                         setattr(self.char,key,int(value.get()))
                     except ValueError:
                         pass
+                
+                for key,value in skills_widget.items():
+                    self.char.skills[key] = value.get()
 
-                self.char.hp = self.char.max_hp
-                self.char.hit_dice = self.char.max_hit_dice
                 self.save_char()
                 self.update_frontpage()
                 self.update_page.destroy()
+                
             except ValueError:
                 print('invalid entry')
 
         self.update_page = tk.Toplevel(self.root)
         self.update_page.title('Update Character')
-        self.update_page.geometry('400x450')
-        abilities_frame = tk.Frame(self.update_page)
-        abilities_frame.grid(row=0,column=0,sticky='w')
-        other_frame = tk.Frame(self.update_page)
-        other_frame.grid(row=0,column=1,sticky='w')
+        abilities_frame = tk.LabelFrame(self.update_page,text='Ability Scores')
+        abilities_frame.grid(row=0,column=0,padx=10,pady=10,sticky='news')
+        other_frame = tk.LabelFrame(self.update_page,text='Other Stats')
+        other_frame.grid(row=0,column=1,sticky='nws',padx=10)
+        skills_frame = tk.LabelFrame(self.update_page,text='Skills')
+        skills_frame.grid(row=1,column=0,padx=10,pady=10,sticky='news')
 
+        # ability scores
         ability_widgets = {} 
         row_index = 0
         for text,attribute in self.char.ability_scores().items():
+            var = tk.BooleanVar(value=self.char.saving_throws[attribute])
             label = tk.Label(abilities_frame, text=f'{text} {getattr(self.char,attribute)}')
             label.grid(row=row_index, column=0)
-            entry = tk.Entry(abilities_frame, width=10)
+            entry = tk.Entry(abilities_frame, width=5)
             entry.grid(row=row_index, column=1)
-            ability_widgets[attribute] = entry  # Store Entry widget in the dictionary
+            checkbox = tk.Checkbutton(abilities_frame,variable=var)
+            checkbox.grid(row=row_index,column=2)
+            ability_widgets[attribute] = (entry,var ) # Store Entry widget in the dictionary
             row_index += 1
-        
+            
+        # other stats - !change the label!
         other_widgets = {} 
         row_index = 0
         for text,attribute in self.char.other_stats().items():
             if text != 'Name':
                 label = tk.Label(other_frame, text=f'{text} {getattr(self.char,attribute)}')
                 label.grid(row=row_index, column=0)
-                entry = tk.Entry(other_frame, width=10)
+                entry = tk.Entry(other_frame, width=5)
                 entry.grid(row=row_index, column=1)
                 other_widgets[attribute] = entry  # Store Entry widget in the dictionary
                 row_index += 1
         
+        # skills widgets
+        row_index = 0
+        skills_widget = {} 
+        for name,prof in self.char.skills.items():
+            var = tk.BooleanVar(value=self.char.skills[name])
+            label = tk.Label(skills_frame, text=f'{name}')
+            label.grid(row=row_index, column=0,sticky='w')
+            checkbox = tk.Checkbutton(skills_frame,variable=var)
+            checkbox.grid(row=row_index,column=1,sticky='w')
+            skills_widget[name] = var
+            row_index += 1
 
         done_button = tk.Button(self.update_page, text='Done', command=on_done_click)
-        done_button.grid(row=row_index, column=1, pady=10)
+        done_button.grid(row=row_index, column=1, pady=10,padx=10,sticky='news')
         self.update_page.wait_window()
 
     def run(self):
