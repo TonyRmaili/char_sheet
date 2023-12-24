@@ -5,7 +5,7 @@ import pandas as pd
 with open('./cleaned_data/items.json', 'r') as file:
     data = json.load(file)
 
-df = pd.json_normalize(data['itemGroup'])
+df = pd.json_normalize(data['item'])
 
 def main(data):
     for row in data['itemGroup']:
@@ -20,6 +20,6 @@ def save_data(data):
         json.dump(data, file,indent=4)
 if __name__ == "__main__":
     # data = del_key()
-    print(df.info())
+    print(df.columns)
     # save_data(data)
     

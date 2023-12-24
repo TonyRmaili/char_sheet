@@ -19,6 +19,6 @@ Other functions
 - Data storage ; json vs SQL vs SQLite vs exel
 
 AI implementation
--generate monster statblock, item, etc
+-generate monster statblock, item, picture, etc
 
 

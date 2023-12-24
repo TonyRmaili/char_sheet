@@ -18,7 +18,7 @@ class Character:
         self.hp = self.max_hp
         self.hit_dice = self.max_hit_dice
         self.lvl=1
-        self.PB = 0
+        self.PB = 2
         self.AC = 0
         self.initiative = 0
         self.speed = 0
@@ -48,7 +48,13 @@ class Character:
                             'tier8':{'max':0,'current':0},
                             'tier9':{'max':0,'current':0}
                             }
-        
+        self.ability_scores ={'Strength':'stre',
+                'Dexterity':'dex',
+                'Constitution':'con',
+                'Inteligence':'inte',
+                'Wisdom':'wis',
+                'Charisma':'cha'}    
+    
         self.saving_throws = {
                 'stre':False,
                 'dex':False,
@@ -57,38 +63,36 @@ class Character:
                 'wis':False,
                 'cha':False}
         
-        self.skills = {'Acrobatics': False,
-                        'Animal Handling': False,
-                        'Arcana': False,
-                        'Athletics': False,
-                        'Deception': False,
-                        'History': False,
-                        'Insight': False,
-                        'Intimidation': False,
-                        'Investigation': False,
-                        'Medicine': False,
-                        'Nature': False,
-                        'Perception': False,
-                        'Performance': False,
-                        'Persuasion': False,
-                        'Religion': False,
-                        'Sleight of Hand': False,
-                        'Stealth': False, 
-                        'Survival': False}
+        self.skills = {'Acrobatics': [False,'Dexterity'],
+                        'Animal Handling': [False,'Wisdom'],
+                        'Arcana': [False,'Inteligence'],
+                        'Athletics': [False,'Strength'],
+                        'Deception': [False,'Charisma'],
+                        'History': [False,'Inteligence'],
+                        'Insight': [False,'Wisdom'],
+                        'Intimidation': [False,'Charisma'],
+                        'Investigation': [False,'Inteligence'],
+                        'Medicine': [False,'Wisdom'],
+                        'Nature': [False,'Inteligence'],
+                        'Perception': [False,'Wisdom'],
+                        'Performance': [False,'Charisma'],
+                        'Persuasion': [False,'Charisma'],
+                        'Religion': [False,'Inteligence'],
+                        'Sleight of Hand': [False,'Dexterity'],
+                        'Stealth': [False,'Dexterity'],
+                        'Survival': [False,'Wisdom']
+                        }
         
-    def ability_mod(self):
-        abs_mod = []
-        for attribute in self.ability_scores().values():
-            mod = getattr(self,attribute)
-            if mod >= 10:
-                mod = int((mod-10)/2)
-                abs_mod.append(mod)        
-            elif mod < 10:
-                mod = int((mod-10)/2 -0.5)
-                abs_mod.append(mod)
-        return abs_mod
-        
-        
+    def ability_mod(self,ability):
+        mod_str = self.ability_scores[ability]
+        mod = getattr(self,mod_str)
+        if mod >= 10:
+            mod = int((mod-10)/2)
+            return mod   
+        elif mod < 10:
+            mod = int((mod-10)/2 -0.5)
+            return mod 
+
     
     def spend_slot(self,tier):
         self.spell_slots[tier]['current'] -=1
@@ -153,14 +157,6 @@ class Character:
                 'Hp':'hp',
                 'Hit Dice': 'hit_dice'}
 
-    def ability_scores(self):
-        return {'Strength':'stre',
-                'Dexterity':'dex',
-                'Constitution':'con',
-                'Inteligence':'inte',
-                'Wisdom':'wis',
-                'Charisma':'cha'}
-    
     def other_stats(self):
         return {
             'Name':'name',
@@ -179,7 +175,7 @@ class Character:
         }
     
     def save_stats(self):
-        all_stats = {**self.other_stats(),**self.ability_scores()}
+        all_stats = {**self.other_stats(),**self.ability_scores}
         all_stats['Hp'] = 'hp'
         all_stats['Hit Dice'] = 'hit_dice'
         all_stats['Temp Hp'] = 'temp_hp'
@@ -193,3 +189,29 @@ class Character:
                 'Initiative':'initiative',
                 'Speed':'speed' }
 
+if __name__=='__main__':
+
+    ch = Character()
+    
+    print(ch.skills['Acrobatics'][0])
+        
+
+
+# self.skills = {'Acrobatics': False,
+#                         'Animal Handling': False,
+#                         'Arcana': False,
+#                         'Athletics': False,
+#                         'Deception': False,
+#                         'History': False,
+#                         'Insight': False,
+#                         'Intimidation': False,
+#                         'Investigation': False,
+#                         'Medicine': False,
+#                         'Nature': False,
+#                         'Perception': False,
+#                         'Performance': False,
+#                         'Persuasion': False,
+#                         'Religion': False,
+#                         'Sleight of Hand': False,
+#                         'Stealth': False, 
+#                         'Survival': False}

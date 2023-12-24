@@ -56,7 +56,7 @@ class FkGui4:
 
         ability_widgets = {} 
         row_index = 0
-        for text,attribute in self.char.ability_scores().items():
+        for text,attribute in self.char.ability_scores.items():
             label = tk.Label(abilities_frame, text=text)
             label.grid(row=row_index, column=0)
             entry = tk.Entry(abilities_frame, width=10)
@@ -209,7 +209,7 @@ class FkGui4:
 
         def ability_scores():
             row_index = 0
-            for text,attribute in self.char.ability_scores().items():
+            for text,attribute in self.char.ability_scores.items():
                 label = tk.Label(ability_score_fr, text=f'{text} {getattr(self.char,attribute)}')
                 label.grid(row=row_index, column=0)
                 row_index += 1
@@ -227,7 +227,6 @@ class FkGui4:
             pass
 
         ability_scores()
-
 
     def live_buttons(self):
         def on_heal_button():
@@ -474,7 +473,7 @@ class FkGui4:
                         pass
                 
                 for key,value in skills_widget.items():
-                    self.char.skills[key] = value.get()
+                    self.char.skills[key] = [value.get(),self.char.skills[key][1]]
 
                 self.save_char()
                 self.update_frontpage()
@@ -485,7 +484,7 @@ class FkGui4:
 
         self.update_page = tk.Toplevel(self.root)
         self.update_page.title('Update Character')
-        abilities_frame = tk.LabelFrame(self.update_page,text='Ability Scores')
+        abilities_frame = tk.LabelFrame(self.update_page,text='Ability Scores and Saving Throws')
         abilities_frame.grid(row=0,column=0,padx=10,pady=10,sticky='news')
         other_frame = tk.LabelFrame(self.update_page,text='Other Stats')
         other_frame.grid(row=0,column=1,sticky='nws',padx=10)
@@ -495,15 +494,20 @@ class FkGui4:
         # ability scores
         ability_widgets = {} 
         row_index = 0
-        for text,attribute in self.char.ability_scores().items():
+        for text,attribute in self.char.ability_scores.items():
             var = tk.BooleanVar(value=self.char.saving_throws[attribute])
-            label = tk.Label(abilities_frame, text=f'{text} {getattr(self.char,attribute)}')
+            if var.get():
+                label = tk.Label(abilities_frame,
+                    text=f'{text} {getattr(self.char,attribute)} <{self.char.ability_mod(text)+self.char.PB}>')
+            else:
+                label = tk.Label(abilities_frame,
+                    text=f'{text} {getattr(self.char,attribute)} <{self.char.ability_mod(text)}>')
             label.grid(row=row_index, column=0)
             entry = tk.Entry(abilities_frame, width=5)
             entry.grid(row=row_index, column=1)
             checkbox = tk.Checkbutton(abilities_frame,variable=var)
             checkbox.grid(row=row_index,column=2)
-            ability_widgets[attribute] = (entry,var ) # Store Entry widget in the dictionary
+            ability_widgets[attribute] = (entry,var) # Store Entry widget in the dictionary
             row_index += 1
             
         # other stats - !change the label!
@@ -522,8 +526,13 @@ class FkGui4:
         row_index = 0
         skills_widget = {} 
         for name,prof in self.char.skills.items():
-            var = tk.BooleanVar(value=self.char.skills[name])
-            label = tk.Label(skills_frame, text=f'{name}')
+            var = tk.BooleanVar(value=self.char.skills[name][0])
+            
+            if var.get():
+                label = tk.Label(skills_frame, text=f'{name} {self.char.ability_mod(prof[1])+self.char.PB}')
+            else:
+                label = tk.Label(skills_frame, text=f'{name} {self.char.ability_mod(prof[1])}')
+
             label.grid(row=row_index, column=0,sticky='w')
             checkbox = tk.Checkbutton(skills_frame,variable=var)
             checkbox.grid(row=row_index,column=1,sticky='w')
