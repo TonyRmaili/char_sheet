@@ -193,7 +193,3 @@ class Character:
                 'Initiative':'initiative',
                 'Speed':'speed' }
 
-
-ch = Character()
-
-ch.ability_mod()

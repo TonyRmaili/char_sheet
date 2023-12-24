@@ -466,8 +466,7 @@ class FkGui4:
                     except ValueError:
                         pass
                     self.char.saving_throws[key] = value[1].get()
-
-                
+   
                 for key,value in other_widgets.items():
                     try:
                         setattr(self.char,key,int(value.get()))
