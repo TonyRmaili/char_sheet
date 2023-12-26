@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import scrolledtext
 import json,os
 from character5 import Character
 
@@ -88,6 +89,7 @@ class FkGui4:
             all_stats['Spell Slots'] = self.char.spell_slots
             all_stats['Saving Throws'] = self.char.saving_throws
             all_stats['Skills'] = self.char.skills
+            all_stats['Feats and Traits']= self.char.feats_traits  
             with open(folder_path+self.char.name+'.json','w') as file:
                 json.dump(all_stats, file,indent=4)
             self.menu_bar.destroy()
@@ -114,35 +116,193 @@ class FkGui4:
         self.char.spells_known = stats['Spells Known'] 
         self.char.spell_slots = stats['Spell Slots']
         self.char.saving_throws=stats['Saving Throws'] 
-        self.char.skills = stats['Skills'] 
+        self.char.skills = stats['Skills']
+        self.char.feats_traits = stats['Feats and Traits'] 
         self.root.title(self.char.name)
-    
+
+    def add_short_resets(self):
+        def addskill():
+            feat = {}
+            if skillname_entry.get() == '':
+                raise ValueError
+            else:
+                feat['name'] = skillname_entry.get()
+              
+            if skilltag_entry.get() == '':
+                feat['tag'] = None
+            else:
+                feat['tag'] = skilltag_entry.get()
+
+            if DC_type_entry.get() == '' or DC_entry.get() == '':
+                feat['DC'] = None
+            elif not DC_entry.get().isnumeric():
+                raise ValueError
+            else:
+                feat['DC'] = {
+                    'Type':DC_type_entry.get(),
+                    'Value':DC_entry.get()
+                }
+
+            if text_widget.get("1.0", "end-1c") =='':
+                feat['text'] = None
+            else:
+                feat['text'] = text_widget.get("1.0", "end-1c")
+
+            if not var.get():
+                feat['reset'] = None
+                feat['charges'] = None
+            else:
+                feat['reset'] = rest_type_entry.get()
+                feat['charges'] ={
+                    'max' : charges.get(),
+                    'current':charges.get()
+                }
+            self.char.feats_traits.append(feat)
+            self.update_frontpage()
+            print(self.char.feats_traits)
+           
+                    
+
+
+        #topframe
+        top_fr = tk.Frame(self.add_reset_frame)
+        top_fr.pack()
+        bottom_fr = tk.Frame(self.add_reset_frame)
+        bottom_fr.pack()
+        
+
+        skillname_lb = tk.Label(top_fr,text='Skill Name')
+        skillname_lb.grid(row=0,column=0)
+        skillname_entry =tk.Entry(top_fr,width=15)
+        skillname_entry.grid(row=0,column=1)
+
+        skilltag_lb = tk.Label(top_fr,text='Skill Tag')
+        skilltag_lb.grid(row=1,column=0)
+        skilltag_entry =tk.Entry(top_fr,width=15)
+        skilltag_entry.grid(row=1,column=1)
+        
+            # charges entry 
+        var = tk.BooleanVar()
+        charge_check_lb = tk.Label(top_fr,text='Has Charges?')
+        charge_check_lb.grid(row=2,column=0)
+        checkbox = tk.Checkbutton(top_fr,variable=var)
+        checkbox.grid(row=2,column=1)
+
+        charges_lb = tk.Label(top_fr,text='Charges')
+        charges_lb.grid(row=3,column=0)                            
+        charges = tk.Spinbox(top_fr, from_=1, to='infinity',width=5)
+        charges.grid(row=3,column=1)
+
+        
+        DC_type_lb = tk.Label(top_fr,text='DC Type')
+        DC_type_lb.grid(row=4,column=0)
+        DC_type_entry = ttk.Combobox(top_fr,values=list(self.char.ability_scores.keys()),width=8) 
+        DC_type_entry.grid(row=4,column=1) 
+
+        DC_val_lb = tk.Label(top_fr,text='DC Value')
+        DC_val_lb.grid(row=5,column=0)
+        DC_entry =tk.Entry(top_fr,width=5)
+        DC_entry.grid(row=5,column=1)
+
+        rest_type_lb = tk.Label(top_fr,text='Rest Type')
+        rest_type_lb.grid(row=6,column=0)
+        rest_type_entry = ttk.Combobox(top_fr,values=['Short Rest','Long Rest'],width=10) 
+        rest_type_entry.grid(row=6,column=1) 
+
+
+        # bottom       
+        info_lb =tk.Label(bottom_fr,text='Skill Info')
+        info_lb.pack()
+        addskill_btn= tk.Button(bottom_fr,text='Add Skill',
+                                    command=addskill)
+        addskill_btn.pack()
+        text_widget = tk.Text(bottom_fr, wrap="word", height=5, width=20)
+        text_widget.pack()
+                                   
     def addspells_frame(self):
         def addspell():
-            self.char.addspell(addspellname_entry.get(),addspelltier_entry.get())
+            self.char.addspell(name=addspellname_entry.get(),
+                               tier=addspelltier_entry.get(),
+                               components=components.get(),
+                               innate=innat_var.get(),
+                               srange=range_box.get(),
+                               duration= duration_box.get(),
+                               action=action_box.get(),
+                               concentration=con_var.get(),
+                               text=text_widget.get("1.0", "end-1c"),
+                               school=school_box.get()
+                               )
+    
             self.spell_book_window.destroy()
             self.open_spell_book()
             
 
         frame = tk.LabelFrame(self.spell_book_window,text='Edit Spells and Slots')
         frame.grid(row=1,column=0,padx=10,sticky='news')
+
+        top_fr = tk.Frame(frame)
+        top_fr.grid(row=0,column=0,sticky='w')
+        bottom_fr = tk.Frame(frame)
+        bottom_fr.grid(row=1,column=0,sticky='w',pady=5)
+
             # spells-  button
-        addspell_btn= tk.Button(frame,text='Add Spell',
+        addspell_btn= tk.Button(top_fr,text='Add Spell',
                                     command=addspell)
                                                                
-        addspell_btn.grid(row=0,column=3,padx=10,sticky='w')
+        addspell_btn.grid(row=1,column=11,padx=10,sticky='w')
             # entry name and label
-        spellname_label = tk.Label(frame,text='Spell Name')
+        spellname_label = tk.Label(top_fr,text='Spell Name')
         spellname_label.grid(row=0,column=0)
-        addspellname_entry =tk.Entry(frame,width=15)
+        addspellname_entry =tk.Entry(top_fr,width=15)
         addspellname_entry.grid(row=0,column=1)
         
             # tier entry 
-        addspelltier_entry = ttk.Combobox(frame,width=5,
+        addspelltier_entry = ttk.Combobox(top_fr,width=5,
                                           values=list(self.char.spell_tiers.keys()))
                                          
         addspelltier_entry.grid(row=0,column=2)
-       
+
+        comp_list = ['V','S','M','VS','VM','SM','VSM']
+        components = ttk.Combobox(top_fr,width=5,values=comp_list)
+        components.grid(row=0,column=3)
+
+        innate_lb = tk.Label(top_fr,text='Innate')
+        innate_lb.grid(row=0,column=4)
+        innat_var = tk.BooleanVar()
+        innate_check = tk.Checkbutton(top_fr,variable=innat_var)
+        innate_check.grid(row=0,column=5)
+
+        # row 1
+        school_list = ['Abjuration','Evocation','Transmutation',
+                       'Conjuration','Divination','Necromany',
+                       'Illusiob','Enchantment']
+        school_box = ttk.Combobox(top_fr,values=school_list)
+        school_box.grid(row=1,column=0)
+
+        range_val = ['Touch','Self','Range','Special']
+        range_box = ttk.Combobox(top_fr,width=5,values=range_val)
+        range_box.grid(row=1,column=1)
+
+        duration_val = ['Instantaneous','Rounds','Minutes','Hours','Days','Special']
+        duration_box = ttk.Combobox(top_fr,width=5,values=duration_val)
+        duration_box.grid(row=1,column=2)
+
+        action_val = ['Action','Bonus Action','Reaction','Special']
+        action_box = ttk.Combobox(top_fr,width=5,values=action_val)
+        action_box.grid(row=1,column=3)
+
+        concentration_lb = tk.Label(top_fr,text='Concentration')
+        concentration_lb.grid(row=1,column=4)
+
+        con_var = tk.BooleanVar()
+        concentration_btn = tk.Checkbutton(top_fr,variable=con_var)
+        concentration_btn.grid(row=1,column=5)
+
+        for widget in top_fr.winfo_children():
+            widget.grid_configure(sticky='w')
+
+        text_widget = tk.Text(bottom_fr, wrap="word", height=5, width=45)
+        text_widget.grid(row=0,column=0,sticky='news')
 
         # slots - button
         def spells_slots():
@@ -158,26 +318,93 @@ class FkGui4:
             self.char.add_spellslot(spellslot_tier.get(),int(slot_amount.get()))
             self.update_frontpage()
 
-        slots_lb = tk.Label(frame,text='Spell Slots')
-        slots_lb.grid(row=1,column=0)
-        spellslot_tier= ttk.Combobox(frame,values=spells_slots(),width=5)
-                                    
-        spellslot_tier.grid(row=1,column=1,padx=10,sticky='w')
+        slots_fr = tk.LabelFrame(bottom_fr,text='Spell Slots')
+        slots_fr.grid(row=0,column=1,padx=10)
 
-        slot_amount = tk.Spinbox(frame, from_=1, to='infinity',width=5)
-        slot_amount.grid(row=1,column=2)
+        spellslot_tier= ttk.Combobox(slots_fr,values=spells_slots(),width=5)                        
+        spellslot_tier.grid(row=0,column=0,padx=10,sticky='w')
 
-        add_slots_btn = tk.Button(frame,text='Add Slots',command=add_slots)
-        add_slots_btn.grid(row=1,column=3)
+        slot_amount = tk.Spinbox(slots_fr, from_=1, to='infinity',width=5)
+        slot_amount.grid(row=1,column=0)
+
+        add_slots_btn = tk.Button(slots_fr,text='Add Slots',command=add_slots)
+        add_slots_btn.grid(row=2,column=0)
+
+        for widget in slots_fr.winfo_children():
+            widget.grid_configure(pady=5)
 
     def spells_know_frame(self):
-        frame = tk.LabelFrame(self.spell_book_window,text='Spells Known')
-        frame.grid(row=0,column=0,padx=10,pady=10,sticky='wsn')
-        row_index = 0
-        for tier,name in self.char.spells_known.items():
-            label = tk.Label(frame,text=f'{name} {tier}')
-            label.grid(row=row_index,column=0,padx=5,pady=5,sticky='w')
-            row_index +=1
+        frame = tk.Frame(self.spell_book_window)
+        frame.grid(row=0,column=0,padx=10,pady=10,sticky='news')
+
+        # info_frame = tk.Label(frame)
+        # info_frame.grid(row=0,column=0)
+        # max_preped_spells = tk.Label(info_frame,text=f'Max prepered Spells {self.char.max_prepered_spells}')
+        # max_preped_spells.grid(row=0,column=0)
+        # spell tier frames
+        prepered_spells = []
+        col_index = 0
+        for tier,spells in self.char.spells_known.items():
+            if spells == []:
+                pass
+
+            else:
+                tier_frame = tk.LabelFrame(frame,text=f'{tier}')
+                tier_frame.grid(row=1,column=col_index)
+                col_index +=1
+                for spell in enumerate(spells):
+                    label = tk.Label(tier_frame,text=f'{spell[1]["name"]}')
+                    label.grid(row=spell[0],column=0)
+                    if tier != 'cantrip':
+                        var = tk.IntVar()
+                        check_btn = tk.Checkbutton(tier_frame,variable=var)
+                        check_btn.grid(row=spell[0],column=1)
+
+    def open_inventory_page(self):
+        window = tk.Toplevel(self.root)
+        window.title('Inventory')
+
+        gold_fr = tk.LabelFrame(window,text='Manage Gold')
+        gold_fr.pack()
+        add_item_fr = tk.LabelFrame(window,text='Add Item')
+        item_top_fr = tk.Frame(add_item_fr)
+        item_top_fr.grid(row=0,column=0,sticky='w')
+        item_bot_fr =tk.Frame(add_item_fr)
+        item_bot_fr.grid(row=1,column=0)
+        add_item_fr.pack()
+        def add_gold():
+            try:
+                self.char.gold += int(self.gold_entry.get())
+            except ValueError:
+                pass
+        def spend_gold():
+            try:
+                self.char.gold -= int(self.gold_entry.get())
+            except ValueError:
+                pass
+       
+        def gold_widgets():
+            self.gold_entry = tk.Entry(gold_fr,width=5)
+            self.gold_entry.grid(row=0,column=0)
+            add_btn = tk.Button(gold_fr,text='Add',
+                                command=add_gold)
+            add_btn.grid(row=0,column=1)
+            spend_btn = tk.Button(gold_fr,text='Spend',
+                                  command=spend_gold)
+            spend_btn.grid(row=0,column=2)
+
+       
+        item_name_lb = tk.Label(item_top_fr,text='Name')
+        item_name_lb.grid(row=0,column=0,sticky='w')
+        item_name_entry = tk.Entry(item_top_fr,width=7)
+        item_name_entry.grid(row=0,column=1,sticky='w')
+
+        text_widget = tk.Text(item_bot_fr, wrap="word", height=5, width=45)
+        text_widget.pack()
+
+            
+
+        gold_widgets()
 
     def open_spell_book(self):
             self.spell_book_window = tk.Toplevel(self.root)
@@ -190,22 +417,63 @@ class FkGui4:
         self.details_page.title("Character Details")
 
         ability_score_fr = tk.LabelFrame(self.details_page,text='Ability Scores')
-        ability_score_fr.grid(row=0,column=0,padx=10,pady=10)
+        ability_score_fr.grid(row=0,column=0,sticky='nws')
 
-        saving_throws_fr = tk.LabelFrame(self.details_page,text='Saving Throws')
-        saving_throws_fr.grid(row=0,column=1)
-
-        skills_fr = tk.LabelFrame(self.details_page,text='Skills')
-        skills_fr.grid(row=0,column=2)
-
-        short_rest_skills_fr = tk.LabelFrame(self.details_page,text='Short Rest Skills')
-        short_rest_skills_fr.grid(row=1,column=0)
-
-        long_rest_skills_fr = tk.LabelFrame(self.details_page,text='Long Rest Skills')
-        long_rest_skills_fr.grid(row=1,column=1)
+        rest_skills_fr = tk.Frame(self.details_page)
+        rest_skills_fr.grid(row=1,column=0,sticky='news')
 
         spells_know_fr = tk.LabelFrame(self.details_page,text='Spells Known')
-        spells_know_fr.grid(row=2,column=0)
+        spells_know_fr.grid(row=2,column=0,sticky='news')
+        # saving_throws_fr = tk.LabelFrame(self.details_page,text='Saving Throws')
+        # saving_throws_fr.grid(row=0,column=0)
+
+        # skills_fr = tk.LabelFrame(self.details_page,text='Skills')
+        # skills_fr.grid(row=0,column=2)
+
+       
+        
+
+    
+       
+        def spells_known():
+            def open_spell_info(spell):
+                spell_window = tk.Toplevel(self.root)
+                spell_window.title(spell['name'])
+
+                quick_fr = tk.Frame(spell_window)
+                quick_fr.pack()
+
+                text_fr = tk.Frame(spell_window)
+                text_fr.pack()
+
+                row_i = 0
+                for label,value in spell.items():
+                    if label != 'text':
+                        lb = tk.Label(quick_fr,text=f'{label}: {value}',
+                                      font=('MV Boli',15))    
+                        lb.grid(row=row_i,column=0,sticky='w',padx=20)
+                        row_i+=1
+
+                text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=40, height=10)
+                text_widget.insert(tk.END, spell['text'])
+                text_widget.pack(padx=10, pady=10)
+
+            col_index = 0
+            for tier,spells in self.char.spells_known.items():
+                if spells == []:
+                    pass
+                else:
+                    tier_frame = tk.LabelFrame(spells_know_fr,text=f'{tier}')
+                    tier_frame.grid(row=1,column=col_index)
+                    col_index +=1
+                    for spell in enumerate(spells):
+                        btn = tk.Button(tier_frame,text=f'{spell[0]+1} {spell[1]["name"]}',
+                                        command=lambda spell =spell[1]: open_spell_info(spell)) 
+                        btn.grid(row=spell[0],column=0)
+                        if tier != 'cantrip':
+                            var = tk.IntVar()
+                            check_btn = tk.Checkbutton(tier_frame,variable=var)
+                            check_btn.grid(row=spell[0],column=1)
 
         def ability_scores():
             row_index = 0
@@ -218,15 +486,42 @@ class FkGui4:
             pass
 
         def short_rest_skills():
-            pass
+            frame = tk.LabelFrame(rest_skills_fr,text='Short Skills')
+            frame.grid(row=0,column=0,sticky='w')
 
+            col_index = 0
+            row_index = 0
+            for skill in self.char.feats_traits:
+                if skill['reset'] == 'Short Rest':
+                    if row_index%5 == 0:
+                        col_index+=1
+                        row_index = 0
+                    btn = tk.Button(frame,text=f'{skill["name"]}')
+                    btn.grid(row=row_index,column=col_index,sticky='w')
+                    row_index+=1
+            
         def long_rest_skills():
-            pass
+            frame = tk.LabelFrame(rest_skills_fr,text='Long Skills')
+            frame.grid(row=0,column=1,sticky='w')
+
+            col_index = 0
+            row_index = 0
+            for skill in self.char.feats_traits:
+                if skill['reset'] == 'Long Rest':
+                    if row_index%5 == 0:
+                        col_index+=1
+                        row_index = 0
+                    btn = tk.Button(frame,text=f'{skill["name"]}')
+                    btn.grid(row=row_index,column=col_index,sticky='w')
+                    row_index+=1
 
         def skills():
             pass
 
         ability_scores()
+        short_rest_skills()
+        long_rest_skills()
+        spells_known()
 
     def live_buttons(self):
         def on_heal_button():
@@ -284,7 +579,7 @@ class FkGui4:
         notes_btn.grid(row=3,column=1)
 
         inv_btn=tk.Button(self.buttons_frame,text='Inventory',
-                                   command=self.open_details_page)
+                                   command=self.open_inventory_page)
         inv_btn.grid(row=3,column=2)
 
         pet_btn=tk.Button(self.buttons_frame,text='Pets',
@@ -443,7 +738,8 @@ class FkGui4:
         self.char.spells_known = stats['Spells Known'] 
         self.char.spell_slots = stats['Spell Slots']
         self.char.saving_throws=stats['Saving Throws'] 
-        self.char.skills = stats['Skills'] 
+        self.char.skills = stats['Skills']
+        self.char.feats_traits = stats['Feats and Traits']  
         self.root.title(self.char.name)
         self.update_frontpage()
 
@@ -470,8 +766,7 @@ class FkGui4:
                     try:
                         setattr(self.char,key,int(value.get()))
                     except ValueError:
-                        pass
-                
+                        pass    
                 for key,value in skills_widget.items():
                     self.char.skills[key] = [value.get(),self.char.skills[key][1]]
 
@@ -490,7 +785,11 @@ class FkGui4:
         other_frame.grid(row=0,column=1,sticky='nws',padx=10)
         skills_frame = tk.LabelFrame(self.update_page,text='Skills')
         skills_frame.grid(row=1,column=0,padx=10,pady=10,sticky='news')
-
+        # add skills frames
+        self.add_reset_frame = tk.LabelFrame(self.update_page,text='Feats and Traits')
+        self.add_reset_frame.grid(row=1,column=1,padx=10,pady=10,sticky='news')
+        
+        
         # ability scores
         ability_widgets = {} 
         row_index = 0
@@ -516,7 +815,7 @@ class FkGui4:
         for text,attribute in self.char.other_stats().items():
             if text != 'Name':
                 label = tk.Label(other_frame, text=f'{text} {getattr(self.char,attribute)}')
-                label.grid(row=row_index, column=0)
+                label.grid(row=row_index, column=0,sticky='w')
                 entry = tk.Entry(other_frame, width=5)
                 entry.grid(row=row_index, column=1)
                 other_widgets[attribute] = entry  # Store Entry widget in the dictionary
@@ -539,6 +838,8 @@ class FkGui4:
             skills_widget[name] = var
             row_index += 1
 
+        self.add_short_resets()
+        
         done_button = tk.Button(self.update_page, text='Done', command=on_done_click)
         done_button.grid(row=row_index, column=1, pady=10,padx=10,sticky='news')
         self.update_page.wait_window()

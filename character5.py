@@ -27,11 +27,25 @@ class Character:
         self.DC =0
         self.max_prepered_spells = 2
         self.reaction = True
-        self.short_rest_abilities =[]
+        
         self.long_rest_abilities=[]
         self.gold = 0
-        self.spells_known = {}
+        self.spells_known = {
+            'cantrip':[],
+            'tier1':[],
+            'tier2':[],
+            'tier3':[],
+            'tier4':[],
+            'tier5':[],
+            'tier6':[],
+            'tier7':[],
+            'tier8':[],
+            'tier9':[]
+        }
         self.spells_prepared = {}
+
+        self.feats_traits = []
+
         self.spell_tiers = {'cantrip':0,'tier1':1,
                             'tier2':2,'tier3':3,
                             'tier4':4,'tier5':5,
@@ -93,7 +107,6 @@ class Character:
             mod = int((mod-10)/2 -0.5)
             return mod 
 
-    
     def spend_slot(self,tier):
         self.spell_slots[tier]['current'] -=1
         if self.spell_slots[tier]['current'] <= 0:
@@ -106,8 +119,7 @@ class Character:
 
     def add_spellslot(self,slot,amount):
         self.spell_slots[slot]['max'] += amount
-        print(self.spell_slots)
-
+        
     def take_short_rest(self):
         print('taking short rest')
 
@@ -121,8 +133,24 @@ class Character:
         for tier in self.spell_slots.values():
             tier['current'] = tier['max']
 
-    def addspell(self,name,tier):
-        self.spells_known[tier] = name
+    def addspell(self,name,tier,components,innate,
+                 srange,duration,action,concentration,
+                 text,school):
+        
+        spell = {
+            'name':name,
+            'components':components,
+            'innate':innate,
+            'range':srange,
+            'duration':duration,
+            'action':action,
+            'concentration':concentration,
+            'text':text,
+            'school':school
+            }
+        
+        self.spells_known[tier].append(spell)
+        
 
     # not correct atm
     def damage(self,entry): 
@@ -179,6 +207,7 @@ class Character:
         all_stats['Hp'] = 'hp'
         all_stats['Hit Dice'] = 'hit_dice'
         all_stats['Temp Hp'] = 'temp_hp'
+        all_stats['Gold'] = 'gold'
         return all_stats
    
     def combat_stats(self):
@@ -192,26 +221,5 @@ class Character:
 if __name__=='__main__':
 
     ch = Character()
-    
     print(ch.skills['Acrobatics'][0])
-        
-
-
-# self.skills = {'Acrobatics': False,
-#                         'Animal Handling': False,
-#                         'Arcana': False,
-#                         'Athletics': False,
-#                         'Deception': False,
-#                         'History': False,
-#                         'Insight': False,
-#                         'Intimidation': False,
-#                         'Investigation': False,
-#                         'Medicine': False,
-#                         'Nature': False,
-#                         'Perception': False,
-#                         'Performance': False,
-#                         'Persuasion': False,
-#                         'Religion': False,
-#                         'Sleight of Hand': False,
-#                         'Stealth': False, 
-#                         'Survival': False}
+    
