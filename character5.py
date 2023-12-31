@@ -30,6 +30,9 @@ class Character:
         
         self.long_rest_abilities=[]
         self.gold = 0
+        
+        self.notes = []
+
         self.spells_known = {
             'cantrip':[],
             'tier1':[],
@@ -42,6 +45,7 @@ class Character:
             'tier8':[],
             'tier9':[]
         }
+        
         self.spells_prepared = {}
 
         self.feats_traits = []

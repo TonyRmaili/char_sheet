@@ -12,7 +12,7 @@
     "Save DC": "",
     "Max spells prepared": "",
     "Inspiration": "",
-    "Strength": 10,
+    "Strength": 15,
     "Dexterity": 10,
     "Constitution": 10,
     "Inteligence": 10,
@@ -21,49 +21,13 @@
     "Hp": 45,
     "Hit Dice": 4,
     "Temp Hp": 0,
-    "Gold": 16,
+    "Gold": 66,
     "Spells Known": {
         "cantrip": [],
-        "tier1": [
-            {
-                "name": "Silvery Barbs",
-                "components": "V",
-                "innate": false,
-                "range": "Range",
-                "duration": "Instantaneous",
-                "action": "Reaction",
-                "concentration": false,
-                "text": "",
-                "school": "Enchantment"
-            }
-        ],
+        "tier1": [],
         "tier2": [],
-        "tier3": [
-            {
-                "name": "Fireball",
-                "components": "VSM",
-                "innate": false,
-                "range": "Range",
-                "duration": "Instantaneous",
-                "action": "Action",
-                "concentration": false,
-                "text": "",
-                "school": "Evocation"
-            }
-        ],
-        "tier4": [
-            {
-                "name": "storm sphere",
-                "components": "VSM",
-                "innate": false,
-                "range": "Range",
-                "duration": "Rounds",
-                "action": "Action",
-                "concentration": true,
-                "text": "Very big aoe",
-                "school": "Conjuration"
-            }
-        ],
+        "tier3": [],
+        "tier4": [],
         "tier5": [],
         "tier6": [],
         "tier7": [],
@@ -192,17 +156,6 @@
     },
     "Feats and Traits": [
         {
-            "name": "arcane rec",
-            "tag": "AC",
-            "DC": null,
-            "text": "recovery slots ",
-            "reset": "Long Rest",
-            "charges": {
-                "max": "1",
-                "current": "1"
-            }
-        },
-        {
             "name": "Power Surge",
             "tag": "PS",
             "DC": {
@@ -217,20 +170,6 @@
             }
         },
         {
-            "name": "fde",
-            "tag": "df",
-            "DC": {
-                "Type": "Dexterity",
-                "Value": "4"
-            },
-            "text": "ddfdfdf",
-            "reset": "Short Rest",
-            "charges": {
-                "max": "1",
-                "current": "1"
-            }
-        },
-        {
             "name": "zdxfe",
             "tag": "gh",
             "DC": null,
@@ -239,28 +178,46 @@
             "charges": null
         },
         {
-            "name": "zdxfeer",
-            "tag": "gh",
+            "name": "dsdsds",
+            "tag": null,
             "DC": null,
-            "text": "dfdfdf\n\n\ndfdf",
+            "text": "dd",
             "reset": null,
             "charges": null
+        }
+    ],
+    "Notes": [
+        {
+            "title": "1",
+            "text": "1"
         },
         {
-            "name": "zdxfeer",
-            "tag": "gh",
-            "DC": null,
-            "text": "dfdfdf\n\n\ndfdf",
-            "reset": null,
-            "charges": null
+            "title": "2",
+            "text": "2"
         },
         {
-            "name": "zdxfeerdfdf",
-            "tag": "gh",
-            "DC": null,
-            "text": "dfdfdf\n\n\ndfdf",
-            "reset": null,
-            "charges": null
+            "title": "3",
+            "text": "3"
+        },
+        {
+            "title": "5",
+            "text": "5"
+        },
+        {
+            "title": "7",
+            "text": "7"
+        },
+        {
+            "title": "8",
+            "text": "8"
+        },
+        {
+            "title": "9",
+            "text": "9"
+        },
+        {
+            "title": "11",
+            "text": "11"
         }
     ]
 }

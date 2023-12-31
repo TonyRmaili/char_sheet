@@ -21,6 +21,7 @@ class FkGui4:
         self.auto_load_char()
         self._menu_setup()
     
+    
    
     def create_char_page(self):
         def on_done_click():
@@ -89,7 +90,8 @@ class FkGui4:
             all_stats['Spell Slots'] = self.char.spell_slots
             all_stats['Saving Throws'] = self.char.saving_throws
             all_stats['Skills'] = self.char.skills
-            all_stats['Feats and Traits']= self.char.feats_traits  
+            all_stats['Feats and Traits']= self.char.feats_traits 
+            all_stats['Notes'] = self.char.notes 
             with open(folder_path+self.char.name+'.json','w') as file:
                 json.dump(all_stats, file,indent=4)
             self.menu_bar.destroy()
@@ -118,6 +120,7 @@ class FkGui4:
         self.char.saving_throws=stats['Saving Throws'] 
         self.char.skills = stats['Skills']
         self.char.feats_traits = stats['Feats and Traits'] 
+        self.char.notes = stats['Notes']
         self.root.title(self.char.name)
 
     def add_short_resets(self):
@@ -412,6 +415,62 @@ class FkGui4:
             self.spells_know_frame()
             self.addspells_frame()
 
+    def open_notes_page(self):
+        self.notes_page = tk.Toplevel(self.root)
+        self.notes_page.title("Notes")
+        notes_fr = tk.LabelFrame(self.notes_page,text='Notes')
+        notes_fr.grid(row=0,column=0,sticky='w')
+        add_note_fr = tk.LabelFrame(self.notes_page,text='Add Note')
+        add_note_fr.grid(row=1,column=0,sticky='w')
+
+        def add_note():
+            title = title_entry.get()
+            text = text_widget.get("1.0", "end-1c")
+            self.char.notes.append({'title':title,'text':text})
+            self.save_char()
+
+        def open_note(title,text,i):
+            note_window = tk.Toplevel(self.root)
+            note_window.title(title)
+            
+            def delete_note(i):
+                self.char.notes.pop(i)
+                self.save_char()
+                note_window.destroy()
+                self.notes_page.destroy()
+
+            text_widget = scrolledtext.ScrolledText(note_window, wrap=tk.WORD, width=40, height=10)
+            text_widget.insert(tk.END, text)
+            text_widget.pack(padx=10, pady=10)
+
+            delete_btn = tk.Button(note_window,text='Delete',command=lambda:delete_note(i))
+            delete_btn.pack()
+            
+
+
+        # add note 
+        title_entry = tk.Entry(add_note_fr,width=40)
+        title_entry.grid(row=0,column=1)
+        add_btn = tk.Button(add_note_fr,text='Scribe',command=add_note)
+        add_btn.grid(row=0,column=0)
+        text_widget = tk.Text(add_note_fr, wrap="word", height=8, width=40)
+        text_widget.grid(row=1,column=1)
+
+        # loop on notes
+        row_index =0
+        col_index =0
+        for i,note in enumerate(self.char.notes):
+            if row_index%6 == 0:
+                        col_index+=1
+                        row_index = 0
+            btn = tk.Button(notes_fr,text=f'{note["title"]}',
+                            command=lambda title =note["title"],text=note["text"],index = i:open_note(title,text,index))
+            btn.grid(row=row_index,column=col_index,sticky='w')
+            row_index+=1
+            
+            
+
+
     def open_details_page(self):
         self.details_page = tk.Toplevel(self.root)
         self.details_page.title("Character Details")
@@ -429,14 +488,14 @@ class FkGui4:
 
         # skills_fr = tk.LabelFrame(self.details_page,text='Skills')
         # skills_fr.grid(row=0,column=2)
-
-       
-        
-
     
-       
         def spells_known():
-            def open_spell_info(spell):
+            def open_spell_info(spell,tier,i):
+                def delete_spell(i,tier):
+                    self.char.spells_known[tier].pop(i)
+                    spell_window.destroy()
+                    self.details_page.destroy()
+                    
                 spell_window = tk.Toplevel(self.root)
                 spell_window.title(spell['name'])
 
@@ -458,6 +517,9 @@ class FkGui4:
                 text_widget.insert(tk.END, spell['text'])
                 text_widget.pack(padx=10, pady=10)
 
+                delete_btn = tk.Button(spell_window,text='Delete',command=lambda:delete_spell(i,tier))
+                delete_btn.pack()
+
             col_index = 0
             for tier,spells in self.char.spells_known.items():
                 if spells == []:
@@ -468,7 +530,7 @@ class FkGui4:
                     col_index +=1
                     for spell in enumerate(spells):
                         btn = tk.Button(tier_frame,text=f'{spell[0]+1} {spell[1]["name"]}',
-                                        command=lambda spell =spell[1]: open_spell_info(spell)) 
+                                        command=lambda spell =spell[1],out_tier = tier,i=spell[0]: open_spell_info(spell,out_tier,i)) 
                         btn.grid(row=spell[0],column=0)
                         if tier != 'cantrip':
                             var = tk.IntVar()
@@ -489,14 +551,46 @@ class FkGui4:
             frame = tk.LabelFrame(rest_skills_fr,text='Short Skills')
             frame.grid(row=0,column=0,sticky='w')
 
+            def open_skill_info(i,skill):
+                def delete_skill(i):
+                    self.char.feats_traits.pop(i)
+                    skill_window.destroy()
+                    self.details_page.destroy()
+                    
+                skill_window = tk.Toplevel(self.root)
+                skill_window.title(skill['name'])
+
+                quick_fr = tk.Frame(skill_window)
+                quick_fr.pack()
+
+                text_fr = tk.Frame(skill_window)
+                text_fr.pack()
+
+                row_i = 0
+                for label,value in skill.items():
+                    if label != 'text':
+                        lb = tk.Label(quick_fr,text=f'{label}: {value}',
+                                      font=('MV Boli',15))    
+                        lb.grid(row=row_i,column=0,sticky='w',padx=20)
+                        row_i+=1
+
+                text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=40, height=10)
+                text_widget.insert(tk.END, skill['text'])
+                text_widget.pack(padx=10, pady=10)
+
+                delete_btn = tk.Button(skill_window,text='Delete',command=lambda:delete_skill(i))
+                delete_btn.pack()
+
+
             col_index = 0
             row_index = 0
-            for skill in self.char.feats_traits:
+            for i,skill in enumerate(self.char.feats_traits):
                 if skill['reset'] == 'Short Rest':
                     if row_index%5 == 0:
                         col_index+=1
                         row_index = 0
-                    btn = tk.Button(frame,text=f'{skill["name"]}')
+                    btn = tk.Button(frame,text=f'{skill["name"]}',
+                                    command=lambda index = i: open_skill_info(index,skill))
                     btn.grid(row=row_index,column=col_index,sticky='w')
                     row_index+=1
             
@@ -504,14 +598,46 @@ class FkGui4:
             frame = tk.LabelFrame(rest_skills_fr,text='Long Skills')
             frame.grid(row=0,column=1,sticky='w')
 
+            def open_skill_info(i,skill):
+                def delete_skill(i):
+                    self.char.feats_traits.pop(i)
+                    skill_window.destroy()
+                    self.details_page.destroy()
+                    
+                skill_window = tk.Toplevel(self.root)
+                skill_window.title(skill['name'])
+
+                quick_fr = tk.Frame(skill_window)
+                quick_fr.pack()
+
+                text_fr = tk.Frame(skill_window)
+                text_fr.pack()
+
+                row_i = 0
+                for label,value in skill.items():
+                    if label != 'text':
+                        lb = tk.Label(quick_fr,text=f'{label}: {value}',
+                                      font=('MV Boli',15))    
+                        lb.grid(row=row_i,column=0,sticky='w',padx=20)
+                        row_i+=1
+
+                text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=40, height=10)
+                text_widget.insert(tk.END, skill['text'])
+                text_widget.pack(padx=10, pady=10)
+
+                delete_btn = tk.Button(skill_window,text='Delete',command=lambda:delete_skill(i))
+                delete_btn.pack()
+
+
             col_index = 0
             row_index = 0
-            for skill in self.char.feats_traits:
+            for i,skill in enumerate(self.char.feats_traits):
                 if skill['reset'] == 'Long Rest':
                     if row_index%5 == 0:
                         col_index+=1
                         row_index = 0
-                    btn = tk.Button(frame,text=f'{skill["name"]}')
+                    btn = tk.Button(frame,text=f'{skill["name"]}',
+                                    command=lambda index = i:open_skill_info(index,skill))
                     btn.grid(row=row_index,column=col_index,sticky='w')
                     row_index+=1
 
@@ -575,7 +701,7 @@ class FkGui4:
         details_btn.grid(row=3,column=0)
 
         notes_btn=tk.Button(self.buttons_frame,text='Notes',
-                                   command=self.open_details_page)
+                                   command=self.open_notes_page)
         notes_btn.grid(row=3,column=1)
 
         inv_btn=tk.Button(self.buttons_frame,text='Inventory',
@@ -740,6 +866,7 @@ class FkGui4:
         self.char.saving_throws=stats['Saving Throws'] 
         self.char.skills = stats['Skills']
         self.char.feats_traits = stats['Feats and Traits']  
+        self.char.notes = stats['Notes']
         self.root.title(self.char.name)
         self.update_frontpage()
 
