@@ -212,12 +212,19 @@
             "text": "8"
         },
         {
-            "title": "9",
-            "text": "9"
-        },
-        {
             "title": "11",
             "text": "11"
         }
-    ]
+    ],
+    "Inventory": {
+        "Tool": [],
+        "Armor": [],
+        "Weapon": [],
+        "Consumable": [],
+        "Wondrous": [],
+        "Other": [],
+        "Potion": [],
+        "Scroll": [],
+        "Ring": []
+    }
 }

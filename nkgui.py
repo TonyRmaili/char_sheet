@@ -92,6 +92,7 @@ class FkGui4:
             all_stats['Skills'] = self.char.skills
             all_stats['Feats and Traits']= self.char.feats_traits 
             all_stats['Notes'] = self.char.notes 
+            all_stats['Inventory'] = self.char.inventory
             with open(folder_path+self.char.name+'.json','w') as file:
                 json.dump(all_stats, file,indent=4)
             self.menu_bar.destroy()
@@ -121,6 +122,7 @@ class FkGui4:
         self.char.skills = stats['Skills']
         self.char.feats_traits = stats['Feats and Traits'] 
         self.char.notes = stats['Notes']
+        self.char.inventory = stats['Inventory']
         self.root.title(self.char.name)
 
     def add_short_resets(self):
@@ -367,19 +369,71 @@ class FkGui4:
         window = tk.Toplevel(self.root)
         window.title('Inventory')
 
+        items_fr = tk.Frame(window)
+        items_fr.grid(row=0,column=0,sticky='w')
+
         gold_fr = tk.LabelFrame(window,text='Manage Gold')
-        gold_fr.pack()
+        gold_fr.grid(row=2,column=0,sticky='w')
+
         add_item_fr = tk.LabelFrame(window,text='Add Item')
+        add_item_fr.grid(row=1,column=0,sticky='w')
+
         item_top_fr = tk.Frame(add_item_fr)
         item_top_fr.grid(row=0,column=0,sticky='w')
         item_bot_fr =tk.Frame(add_item_fr)
         item_bot_fr.grid(row=1,column=0)
-        add_item_fr.pack()
+        
+
+        def items_frames():
+            def open_item_info(i,item):
+                item_window = tk.Toplevel(self.root)
+                item_window.title(item["name"])
+                top_fr = tk.Frame(item_window)
+                top_fr.pack()
+                bottom_fr = tk.Frame(item_window)
+                bottom_fr.pack()
+
+                def delete_item(i,item):    
+                    self.char.inventory[item["type"]].pop(i)
+                    self.save_char()
+                    item_window.destroy()
+                    window.destroy()
+                
+                for key,val in item.items():
+                    if key != 'name':
+                        label = tk.Label(top_fr,text=f'{key} : {val}')
+                        label.pack(padx=5, pady=5)
+
+                text_widget = scrolledtext.ScrolledText(bottom_fr, wrap=tk.WORD, width=40, height=10)
+                text_widget.insert(tk.END, item['text'])
+                text_widget.pack(padx=10, pady=10)
+
+                delete_btn = tk.Button(item_window,text='Delete',command=lambda:delete_item(i,item))
+                delete_btn.pack()
+
+            row_index =0
+            col_index=0
+            for itype,pitems in self.char.inventory.items():
+                if pitems == []:
+                    pass
+                else:
+                    frame = tk.LabelFrame(items_fr,text=f'{itype}')
+                    frame.grid(row=row_index,column=col_index,sticky='w')
+                    col_index+=1
+                    for i,item in enumerate(pitems):         
+                        btn = tk.Button(frame,text=f'{item["name"]}',
+                                        command=lambda i=i,item=item :open_item_info(i,item))
+                        btn.grid(row=row_index,column=0,sticky='w')
+                        row_index+=1
+                row_index =0
+                    
+
         def add_gold():
             try:
                 self.char.gold += int(self.gold_entry.get())
             except ValueError:
                 pass
+
         def spend_gold():
             try:
                 self.char.gold -= int(self.gold_entry.get())
@@ -396,18 +450,53 @@ class FkGui4:
                                   command=spend_gold)
             spend_btn.grid(row=0,column=2)
 
-       
+        def add_item():
+            name = item_name_entry.get()
+            rarity = rarity_box.get()
+            itype = type_box.get()
+            if itype == '':
+                itype = 'Other'
+            attunement = attun.get()
+            text = text_widget.get("1.0", "end-1c")
+
+            item = {'name':name,'rarity':rarity,'type':itype,
+                    'attunement':attunement,'text':text}
+            if name =='':
+                raise ValueError
+            else:
+                self.char.inventory[itype].append(item)
+                self.save_char()
+
         item_name_lb = tk.Label(item_top_fr,text='Name')
         item_name_lb.grid(row=0,column=0,sticky='w')
-        item_name_entry = tk.Entry(item_top_fr,width=7)
+        item_name_entry = tk.Entry(item_top_fr,width=8)
         item_name_entry.grid(row=0,column=1,sticky='w')
+
+        rarities = ['Common','Uncommon','Rare','Very Rare','Legendary','Artifact']
+        rarity_box = ttk.Combobox(item_top_fr,values=rarities,width=8)
+        rarity_box.grid(row=0,column=2,sticky='w')
+
+        types =['Tool','Armor','Weapon','Potion','Scroll','Ring',
+                'Wondrous','Consumable','Other']
+        type_box = ttk.Combobox(item_top_fr,values=types,width=9)
+        type_box.grid(row=0,column=3,sticky='w')
+
+        attun = tk.BooleanVar()
+        attun_lb = tk.Label(item_top_fr,text='Attunment')
+        attun_lb.grid(row=0,column=4,sticky='w')
+        attunment_check = tk.Checkbutton(item_top_fr,variable=attun)
+        attunment_check.grid(row=0,column=5)
+
+        add_item_btn = tk.Button(item_top_fr,text='Pick up',
+                                 command=add_item)
+        add_item_btn.grid(row=0,column=6,sticky='w')
+
 
         text_widget = tk.Text(item_bot_fr, wrap="word", height=5, width=45)
         text_widget.pack()
 
-            
-
         gold_widgets()
+        items_frames()
 
     def open_spell_book(self):
             self.spell_book_window = tk.Toplevel(self.root)
@@ -467,10 +556,7 @@ class FkGui4:
                             command=lambda title =note["title"],text=note["text"],index = i:open_note(title,text,index))
             btn.grid(row=row_index,column=col_index,sticky='w')
             row_index+=1
-            
-            
-
-
+                  
     def open_details_page(self):
         self.details_page = tk.Toplevel(self.root)
         self.details_page.title("Character Details")
@@ -867,6 +953,7 @@ class FkGui4:
         self.char.skills = stats['Skills']
         self.char.feats_traits = stats['Feats and Traits']  
         self.char.notes = stats['Notes']
+        self.char.inventory = stats['Inventory']
         self.root.title(self.char.name)
         self.update_frontpage()
 

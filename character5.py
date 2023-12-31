@@ -33,6 +33,18 @@ class Character:
         
         self.notes = []
 
+        self.inventory = {
+            'Tool':[],
+            'Armor':[],
+            'Weapon':[],
+            'Consumable':[],
+            'Wondrous':[],
+            'Other':[],
+            'Potion':[],
+            'Scroll':[],
+            'Ring':[]     
+        }
+
         self.spells_known = {
             'cantrip':[],
             'tier1':[],
