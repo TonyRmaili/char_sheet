@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import scrolledtext
 import json,os
 from character5 import Character
+import dice 
 
 
 folder_path = 'save_files5/'
@@ -21,7 +22,6 @@ class FkGui4:
         self.auto_load_char()
         self._menu_setup()
     
-
     def create_char_page(self):
         def on_done_click():
             try:
@@ -1042,9 +1042,77 @@ class FkGui4:
         self.root.config(menu=self.menu_bar)
         # sub menus - filemenu
         self.character_files_menu()
-       
+        self.dice_menu()
         self.update_frontpage()
-         
+
+    def dice_menu(self):
+        self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',10),tearoff=0)
+        self.char_menu.add_command(label='Standard Dice',command=self.standard_dice_page)
+        self.menu_bar.add_cascade(label='Tower of Dice',menu=self.char_menu)
+        
+    def standard_dice_page(self):
+            window = tk.Toplevel(self.root)
+            window.title('Standard Dice')
+
+            
+            tower_frame = tk.LabelFrame(window,text='The Tower')
+            tower_frame.grid(row=0,column=0,padx=10,pady=10,sticky='news')
+
+            bottom_frame = tk.LabelFrame(window,text='The Hand')
+            bottom_frame.grid(row=1,column=0,padx=10,sticky='news')
+            
+            x1_spin_fr = tk.LabelFrame(tower_frame,text='x1')
+            x1_spin_fr.grid(row=0,column=0)
+            for i in range(8):
+                spin_x1 = tk.Spinbox(x1_spin_fr,from_=0,to='infinity',width=5)
+                spin_x1.grid(row=i,column=0,padx=5,pady=5)
+            
+            x5_spin_fr = tk.LabelFrame(tower_frame,text='x5')
+            x5_spin_fr.grid(row=0,column=1)
+            for i in range(8):
+                spin_x1 = tk.Spinbox(x5_spin_fr,from_=0,to='infinity',width=5)
+                spin_x1.grid(row=i,column=0,padx=5,pady=5)
+            
+            dice_frame = tk.LabelFrame(tower_frame,text='Dice')
+            dice_frame.grid(row=0,column=2)
+
+            d4_label = tk.Label(dice_frame,text='d4')
+            d6_label = tk.Label(dice_frame,text='d6')
+            d8_label = tk.Label(dice_frame,text='d8')
+            d10_label = tk.Label(dice_frame,text='d10')
+            d12_label = tk.Label(dice_frame,text='d12')
+            d20_label = tk.Label(dice_frame,text='d20')
+            d100_label = tk.Label(dice_frame,text='d100')
+            dY_label = tk.Label(dice_frame,text='dY')
+
+            for i,label in enumerate(dice_frame.winfo_children()):
+                label.grid(row=i,column=2,padx=5,pady=4)
+
+            dY_entry = tk.Entry(dice_frame,width=5)
+            dY_entry.grid(row=i,column=3,padx=5,pady=4)
+
+            
+
+            def roll_dice():
+                pass
+            def reset_page():
+                pass
+            
+            modifier_lb = tk.Label(bottom_frame,text='Modifier')
+            modifier_lb.grid(row=0,column=0,padx=5,pady=5,sticky='news')
+            modifier_entry = tk.Entry(bottom_frame,width=5)
+            modifier_entry.grid(row=0,column=1,padx=5,pady=5,sticky='news')
+
+            roll_btn = tk.Button(bottom_frame,text='Roll',
+                                 command=roll_dice)
+            roll_btn.grid(row=0,column=2,padx=5,pady=5,sticky='news')
+            
+            reset_btn = tk.Button(bottom_frame,text='Reset',
+                                 command=reset_page)
+            reset_btn.grid(row=0,column=3,padx=5,pady=5,sticky='news')
+
+
+
     def character_files_menu(self):
         self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',15),tearoff=0)
         self.char_menu.add_command(label='Create',command=self.create_char_page)
