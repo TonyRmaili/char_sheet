@@ -137,7 +137,9 @@ class Character:
         self.spell_slots[slot]['max'] += amount
         
     def take_short_rest(self):
-        print('taking short rest')
+        for skill in self.feats_traits:
+            if skill['reset'] == 'Short Rest' and skill['charges'] != None:
+                skill['charges']['current'] = skill['charges']['max']
 
     def take_long_rest(self):
         self.hp = self.max_hp
@@ -148,6 +150,10 @@ class Character:
 
         for tier in self.spell_slots.values():
             tier['current'] = tier['max']
+
+        for skill in self.feats_traits:
+            if skill['reset'] != None and skill['charges'] != None:
+                skill['charges']['current'] = skill['charges']['max']
 
     def addspell(self,name,tier,components,innate,
                  srange,duration,action,concentration,

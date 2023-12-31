@@ -21,8 +21,7 @@ class FkGui4:
         self.auto_load_char()
         self._menu_setup()
     
-    
-   
+
     def create_char_page(self):
         def on_done_click():
             try:
@@ -159,16 +158,13 @@ class FkGui4:
             else:
                 feat['reset'] = rest_type_entry.get()
                 feat['charges'] ={
-                    'max' : charges.get(),
-                    'current':charges.get()
+                    'max' : int(charges.get()),
+                    'current':int(charges.get())
                 }
             self.char.feats_traits.append(feat)
             self.update_frontpage()
-            print(self.char.feats_traits)
-           
-                    
-
-
+            
+                  
         #topframe
         top_fr = tk.Frame(self.add_reset_frame)
         top_fr.pack()
@@ -569,11 +565,12 @@ class FkGui4:
 
         spells_know_fr = tk.LabelFrame(self.details_page,text='Spells Known')
         spells_know_fr.grid(row=2,column=0,sticky='news')
-        # saving_throws_fr = tk.LabelFrame(self.details_page,text='Saving Throws')
-        # saving_throws_fr.grid(row=0,column=0)
 
-        # skills_fr = tk.LabelFrame(self.details_page,text='Skills')
-        # skills_fr.grid(row=0,column=2)
+        saving_throws_fr = tk.LabelFrame(self.details_page,text='Saving Throws')
+        saving_throws_fr.grid(row=0,column=1,sticky='nws')
+
+        skills_fr = tk.LabelFrame(self.details_page,text='Skills')
+        skills_fr.grid(row=0,column=2,sticky='nws')
     
         def spells_known():
             def open_spell_info(spell,tier,i):
@@ -631,8 +628,17 @@ class FkGui4:
                 row_index += 1
 
         def saving_throws():
-            pass
-
+            row_index = 0
+            for text,attribute in self.char.ability_scores.items():
+                if self.char.saving_throws[attribute]:
+                    label = tk.Label(saving_throws_fr,
+                        text=f'{text} {self.char.ability_mod(text)+self.char.PB}')
+                else:
+                    label = tk.Label(saving_throws_fr,
+                        text=f'{text} {self.char.ability_mod(text)}')
+                label.grid(row=row_index, column=0)
+                row_index += 1
+                
         def short_rest_skills():
             frame = tk.LabelFrame(rest_skills_fr,text='Short Skills')
             frame.grid(row=0,column=0,sticky='w')
@@ -659,7 +665,8 @@ class FkGui4:
                                       font=('MV Boli',15))    
                         lb.grid(row=row_i,column=0,sticky='w',padx=20)
                         row_i+=1
-
+                if skill['text'] == None:
+                    skill['text'] =''
                 text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=40, height=10)
                 text_widget.insert(tk.END, skill['text'])
                 text_widget.pack(padx=10, pady=10)
@@ -676,7 +683,7 @@ class FkGui4:
                         col_index+=1
                         row_index = 0
                     btn = tk.Button(frame,text=f'{skill["name"]}',
-                                    command=lambda index = i: open_skill_info(index,skill))
+                                    command=lambda index = i,skill=skill: open_skill_info(index,skill))
                     btn.grid(row=row_index,column=col_index,sticky='w')
                     row_index+=1
             
@@ -706,7 +713,8 @@ class FkGui4:
                                       font=('MV Boli',15))    
                         lb.grid(row=row_i,column=0,sticky='w',padx=20)
                         row_i+=1
-
+                if skill['text'] == None:
+                    skill['text'] =''
                 text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=40, height=10)
                 text_widget.insert(tk.END, skill['text'])
                 text_widget.pack(padx=10, pady=10)
@@ -723,17 +731,81 @@ class FkGui4:
                         col_index+=1
                         row_index = 0
                     btn = tk.Button(frame,text=f'{skill["name"]}',
-                                    command=lambda index = i:open_skill_info(index,skill))
+                                    command=lambda index = i,skill=skill:open_skill_info(index,skill))
+                    btn.grid(row=row_index,column=col_index,sticky='w')
+                    row_index+=1
+
+        def aura_skills():
+            frame = tk.LabelFrame(rest_skills_fr,text='Aura Skills')
+            frame.grid(row=0,column=2,sticky='w')
+
+            def open_skill_info(i,skill):
+                def delete_skill(i):
+                    self.char.feats_traits.pop(i)
+                    skill_window.destroy()
+                    self.details_page.destroy()
+                    
+                skill_window = tk.Toplevel(self.root)
+                skill_window.title(skill['name'])
+
+                quick_fr = tk.Frame(skill_window)
+                quick_fr.pack()
+
+                text_fr = tk.Frame(skill_window)
+                text_fr.pack()
+
+                row_i = 0
+                for label,value in skill.items():
+                    if label != 'text':
+                        lb = tk.Label(quick_fr,text=f'{label}: {value}',
+                                      font=('MV Boli',15))    
+                        lb.grid(row=row_i,column=0,sticky='w',padx=20)
+                        row_i+=1
+                        
+                if skill['text'] == None:
+                    skill['text'] =''
+                text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=40, height=10)
+                text_widget.insert(tk.END, skill['text'])
+                text_widget.pack(padx=10, pady=10)
+
+                delete_btn = tk.Button(skill_window,text='Delete',command=lambda:delete_skill(i))
+                delete_btn.pack()
+
+            col_index = 0
+            row_index = 0
+            for i,skill in enumerate(self.char.feats_traits):
+                if skill['reset'] != 'Long Rest' and skill['reset'] != 'Short Rest':
+                    if row_index%5 == 0:
+                        col_index+=1
+                        row_index = 0
+                    btn = tk.Button(frame,text=f'{skill["name"]}',
+                                    command=lambda index = i,skill=skill:open_skill_info(index,skill))
                     btn.grid(row=row_index,column=col_index,sticky='w')
                     row_index+=1
 
         def skills():
-            pass
+            row_i=0
+            col_i=0
+            for name,val in self.char.skills.items():
+                if row_i%6 ==0:
+                    row_i=0
+                    col_i+=1
+                if val[0]:
+                    label = tk.Label(skills_fr,
+                        text=f'{name} {self.char.ability_mod(val[1])+self.char.PB}')
+                else:
+                    label = tk.Label(skills_fr,
+                        text=f'{name} {self.char.ability_mod(val[1])}')
+                label.grid(row=row_i,column=col_i,sticky='w')
+                row_i+=1
 
         ability_scores()
         short_rest_skills()
         long_rest_skills()
         spells_known()
+        saving_throws()
+        skills()
+        aura_skills()
 
     def live_buttons(self):
         def on_heal_button():
@@ -763,6 +835,7 @@ class FkGui4:
         def take_short_rest():
             self.char.take_short_rest()
             hit_dice_lb.config(text=f'Hit Dice {self.char.hit_dice}/{self.char.max_hit_dice}') 
+            self.update_frontpage()
 
         def take_long_rest():
             self.char.take_long_rest()
@@ -831,8 +904,7 @@ class FkGui4:
             widget.grid_configure(sticky='news')
 
     def spells_frame(self):
-        # slots frame
-          
+        # slots frame 
         self.spells_fr = tk.LabelFrame(self.root_frame,text='Spell Slots')
         self.spells_fr.grid(row=1,column=0,padx=10,pady=10,sticky='nsew')
         row_index = 0
@@ -844,7 +916,6 @@ class FkGui4:
             else:
                 frame = tk.LabelFrame(self.spells_fr,text=f'{tier}')
                 frame.grid(row=row_index,column=0,sticky='news')
-                # i = slots['current']
                 canvas = tk.Canvas(frame,height=20,width=100)
                 canvas.grid(row=row_index,column=0)
                 
@@ -905,6 +976,54 @@ class FkGui4:
                                     ,command=regain_slot)
         regain_slot_btn.grid(row=2,column=1)
 
+    def front_skills_frame(self):
+        self.front_skills_fr = tk.Frame(self.root_frame)
+        self.front_skills_fr.grid(row=2,column=1,padx=10,pady=5,sticky='nsew')
+
+        def spend_charge(skill):
+            for i,sk in enumerate(self.char.feats_traits):
+                if skill['name'] == sk['name']:
+                    if self.char.feats_traits[i]['charges']['current'] <=0:
+                        self.char.feats_traits[i]['charges']['current'] =0
+                    else:
+                        self.char.feats_traits[i]['charges']['current'] -= 1
+                        
+            self.update_frontpage()
+
+        def short_skills():
+            short_fr = tk.LabelFrame(self.front_skills_fr,text='Short Skills')
+            short_fr.grid(row=0,column=0,sticky='news')
+
+            for i,skill in enumerate(self.char.feats_traits):
+                if skill['reset'] == 'Short Rest':
+                    label = tk.Label(short_fr,text=f'{skill["name"]}')
+                    label.grid(row=i,column=0,sticky='w')
+                    if skill["charges"] != None:
+                        charges_btn = tk.Button(short_fr,
+                                        text=f'{skill["charges"]["current"]}/{skill["charges"]["max"]}',
+                                        command=lambda skill = skill:spend_charge(skill))
+                        charges_btn.grid(row=i,column=1)
+                        
+
+
+        def long_skills():
+            long_fr = tk.LabelFrame(self.front_skills_fr,text='Long Skills')
+            long_fr.grid(row=0,column=1,sticky='news')
+
+            for i,skill in enumerate(self.char.feats_traits):
+                if skill['reset'] == 'Long Rest':
+                    label = tk.Label(long_fr,text=f'{skill["name"]}')
+                    label.grid(row=i,column=0,sticky='w')
+                    if skill["charges"] != None:
+                        charges_btn = tk.Button(long_fr,
+                                        text=f'{skill["charges"]["current"]}/{skill["charges"]["max"]}',
+                                        command=lambda skill = skill:spend_charge(skill))
+                        charges_btn.grid(row=i,column=1)
+
+       
+        short_skills()
+        long_skills()
+        
     def front_page(self):
         self.main_frame = tk.LabelFrame(self.root_frame,text='Combat Stats')
         self.main_frame.grid(row=0,column=0,padx=10,pady=10,sticky='nsew')
@@ -916,6 +1035,7 @@ class FkGui4:
             row_index += 1
         self.live_buttons()
         self.spells_frame()
+        self.front_skills_frame()
         
     def _menu_setup(self):
         self.menu_bar = tk.Menu(self.root)

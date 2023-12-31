@@ -24,7 +24,19 @@
     "Gold": 66,
     "Spells Known": {
         "cantrip": [],
-        "tier1": [],
+        "tier1": [
+            {
+                "name": "dfdf",
+                "components": "",
+                "innate": false,
+                "range": "",
+                "duration": "",
+                "action": "",
+                "concentration": false,
+                "text": "",
+                "school": ""
+            }
+        ],
         "tier2": [],
         "tier3": [],
         "tier4": [],
@@ -73,20 +85,20 @@
         }
     },
     "Saving Throws": {
-        "stre": false,
-        "dex": false,
+        "stre": true,
+        "dex": true,
         "con": false,
         "inte": false,
-        "wis": false,
+        "wis": true,
         "cha": false
     },
     "Skills": {
         "Acrobatics": [
-            false,
+            true,
             "Dexterity"
         ],
         "Animal Handling": [
-            false,
+            true,
             "Wisdom"
         ],
         "Arcana": [
@@ -98,7 +110,7 @@
             "Strength"
         ],
         "Deception": [
-            false,
+            true,
             "Charisma"
         ],
         "History": [
@@ -130,7 +142,7 @@
             "Wisdom"
         ],
         "Performance": [
-            false,
+            true,
             "Charisma"
         ],
         "Persuasion": [
@@ -138,7 +150,7 @@
             "Charisma"
         ],
         "Religion": [
-            false,
+            true,
             "Inteligence"
         ],
         "Sleight of Hand": [
@@ -165,25 +177,31 @@
             "text": "dgsfs",
             "reset": "",
             "charges": {
-                "max": "5",
-                "current": "5"
+                "max": 5,
+                "current": 5
             }
         },
         {
-            "name": "zdxfe",
-            "tag": "gh",
+            "name": "Indomitable",
+            "tag": "ID",
             "DC": null,
-            "text": "dfdfdf\n\n\ndfdf",
-            "reset": null,
-            "charges": null
+            "text": "",
+            "reset": "Long Rest",
+            "charges": {
+                "max": 3,
+                "current": 3
+            }
         },
         {
-            "name": "dsdsds",
-            "tag": null,
+            "name": "misty step",
+            "tag": "MS",
             "DC": null,
-            "text": "dd",
-            "reset": null,
-            "charges": null
+            "text": "dfdfdfdf",
+            "reset": "Short Rest",
+            "charges": {
+                "max": 1,
+                "current": 1
+            }
         }
     ],
     "Notes": [
