@@ -1049,18 +1049,21 @@ class FkGui4:
     def dice_menu(self):
         self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',10),tearoff=0)
         self.char_menu.add_command(label='Standard Dice',command=self.standard_dice_page)
+        self.char_menu.add_command(label='Large Combat Dice',command=self.large_dice_page)
         self.menu_bar.add_cascade(label='Tower of Dice',menu=self.char_menu)
         
     def standard_dice_page(self):
             window = tk.Toplevel(self.root)
             window.title('Standard Dice')
 
-            
             tower_frame = tk.LabelFrame(window,text='The Tower')
             tower_frame.grid(row=0,column=0,padx=10,pady=10,sticky='news')
 
             bottom_frame = tk.LabelFrame(window,text='The Hand')
             bottom_frame.grid(row=1,column=0,padx=10,sticky='news')
+
+            text_frame = tk.LabelFrame(window,text='The Head')
+            text_frame.grid(row=0,column=1,padx=10,pady=10,sticky='news')
             
             x1_widgets = []
             x1_spin_fr = tk.LabelFrame(tower_frame,text='x1')
@@ -1100,28 +1103,22 @@ class FkGui4:
 
             def roll_dice(): 
                 dice = Dice()
-                # cleaned_x1 = self.dice.clean_dice(x1_widgets)
-                # cleaned_x5 = self.dice.clean_dice(x5_widgets)
-                # x1_rolls=[]
-                # x5_rolls = []
-                # for i,amount in enumerate(cleaned_x1):
-                #     same_dice = self.dice.many_same_dice(i,amount=amount)
-                #     x1_rolls.append(same_dice)
-              
-                # for i,amount in enumerate(cleaned_x5):
-                #     same_dice = self.dice.many_same_dice(i,amount=amount)
-                #     x5_rolls.append(same_dice)
-                # all_rolls=[*x1_rolls,*x5_rolls]
+                text_widget.delete(1.0, tk.END)
                 cleaned_x1= dice.get_multipliers(x1_widgets)
                 cleaned_x5 = dice.get_multipliers(x5_widgets)
                 
+                dice.clean_modifier(modifier_entry)
                 dice.add_multipliers(cleaned_x1,cleaned_x5)
                 dice.setup_dY(dY_entry)
                 dice.roll_all()
 
-
+                all_texts = dice.text_boxing()
+                for row in all_texts:
+                    text_widget.insert(tk.END, row+'\n')
+                    
             def reset_page():
-                pass
+                window.destroy()
+                self.standard_dice_page()
             
             modifier_lb = tk.Label(bottom_frame,text='Modifier')
             modifier_lb.grid(row=0,column=0,padx=5,pady=5,sticky='news')
@@ -1136,6 +1133,104 @@ class FkGui4:
                                  command=reset_page)
             reset_btn.grid(row=0,column=3,padx=5,pady=5,sticky='news')
 
+            text_widget = scrolledtext.ScrolledText(text_frame, wrap=tk.WORD, width=30, height=10)
+            text_widget.insert(tk.END, '')
+            text_widget.pack(padx=10, pady=10)
+
+    def large_dice_page(self):
+        window = tk.Toplevel(self.root)
+        window.title('Large Combat Dice')
+        dice = Dice()
+
+        attacks_fr = tk.LabelFrame(window,text='Large Attacks')
+        attacks_fr.grid(row=0,column=0,padx=10,pady=10,sticky='news')
+
+        atk_left_fr = tk.LabelFrame(attacks_fr,text='To Hit')
+        atk_left_fr.grid(row=0,column=0,padx=10,pady=10,sticky='news')
+        atk_right_fr= tk.LabelFrame(attacks_fr,text='Damage')
+        atk_right_fr.grid(row=0,column=1,padx=10,pady=10,sticky='news')
+
+        saves_fr = tk.LabelFrame(window,text='Large Saves')
+        saves_fr.grid(row=1,column=0,padx=10,pady=10,sticky='news')
+
+        text_fr = tk.LabelFrame(window,text='Rolls')
+        text_fr.grid(row=0,column=1,padx=10,pady=10,sticky='news')
+
+        # attacks frame -left
+        amount_lb = tk.Label(atk_left_fr,text='Amount')
+        amount_lb.grid(row=0,column=0,sticky='w')
+        amount_entry = tk.Entry(atk_left_fr,width=5)
+        amount_entry.grid(row=0,column=1)
+
+        modifier_lb = tk.Label(atk_left_fr,text='Atk modifier')
+        modifier_lb.grid(row=1,column=0,sticky='w')
+        modifier_entry = tk.Entry(atk_left_fr,width=5)
+        modifier_entry.grid(row=1,column=1)
+
+        AC_lb = tk.Label(atk_left_fr,text='Target AC')
+        AC_lb.grid(row=2,column=0,sticky='w')
+        AC_entry = tk.Entry(atk_left_fr,width=5)
+        AC_entry.grid(row=2,column=1)
+
+        def check_adv():
+            disadv_var.set(False)
+        def check_disadv():
+            adv_var.set(False)
+
+        adv_var = tk.BooleanVar()
+        adv_lb = tk.Label(atk_left_fr,text='Advantage')
+        adv_lb.grid(row=3,column=0,sticky='w')
+        adv_entry = tk.Checkbutton(atk_left_fr,
+                    variable=adv_var,command=check_adv)
+        adv_entry.grid(row=3,column=1)
+
+        disadv_var = tk.BooleanVar()
+        disadv_lb = tk.Label(atk_left_fr,text='Disadvantage')
+        disadv_lb.grid(row=4,column=0,sticky='w')
+        disadv_entry = tk.Checkbutton(atk_left_fr,variable=disadv_var,command=check_disadv)
+        disadv_entry.grid(row=4,column=1)
+
+        # attacks frame -right
+        all_dice_matrix = []
+        for i,name in enumerate(dice.damage_dice):
+            spin_box = tk.Spinbox(atk_right_fr,from_=0,to='infinity',width=3)
+            spin_box.grid(row=i,column=0)
+            label = tk.Label(atk_right_fr,text=f'x {name} +')
+            label.grid(row=i,column=1,sticky='w')
+            mod_entry = tk.Entry(atk_right_fr,width=3)
+            mod_entry.grid(row=i,column=2)
+            dmg_type = ttk.Combobox(atk_right_fr,values=dice.damage_types,width=11)
+            dmg_type.grid(row=i,column=3)
+
+            damage_matrix = {'name':name,
+                      'amount':spin_box,
+                      'modifier':mod_entry,
+                      'type':dmg_type}
+            all_dice_matrix.append(damage_matrix)
+        
+        
+            
+        # attacks button
+        def roll_attacks(all):
+            large_attacks_matrix= dice.clean_large_attacks(amount_entry,modifier_entry,
+                AC_entry,adv_var,disadv_var)
+            
+            attacks=dice.roll_large_attacks(large_attacks_matrix)
+            hits= dice.evaluate_hits(attacks=attacks)
+            damage_matrix= dice.get_all_damage_matrix(all)
+
+            print(dice.roll_one_damage_type(damage_dice=damage_matrix[0],crit=False))
+            # print(damage_matrix[0])
+            
+        
+        attack_btn = tk.Button(attacks_fr,text='Attack!',
+            command=lambda all = all_dice_matrix:roll_attacks(all))
+        attack_btn.grid(row=1,column=1,sticky='news')
+
+        # text frame
+        text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=30, height=10)
+        text_widget.insert(tk.END, '')
+        text_widget.pack(padx=10, pady=10)
 
 
     def character_files_menu(self):

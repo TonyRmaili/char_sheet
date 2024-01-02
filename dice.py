@@ -10,9 +10,34 @@ class Dice:
         self.y_side = None
 
         self.multipliers =[]
-
+        self.modifier =0
         self.names =['d4','d6','d8','d10',
                      'd12','d20','d100']
+        
+        self.damage_dice = {
+            'd4':self.d4,
+            'd6':self.d6,
+            'd8':self.d8,
+            'd10':self.d10,
+            'd12':self.d12
+        }
+        
+        self.damage_types= [
+            'Slashing',
+            'Piercing',
+            'Bludgeoning',
+            'Fire',
+            'Cold',
+            'Lightning',
+            'Thunder',
+            'Acid',
+            'Poison',
+            'Necrotic',
+            'Radiant',
+            'Psychic',
+            'Force'
+        ]
+
 
     def d4(self):
         return randint(1,4)
@@ -41,7 +66,6 @@ class Dice:
         else:
             return randint(1,y_sided)
     
-    
     def roll_dice_row(self,amount,dice_index,y_side):
         rolls=[]
         if dice_index !=7:
@@ -49,14 +73,14 @@ class Dice:
                 roll = self.standard_dice[dice_index]()
                 rolls.append(roll)
             total = sum(rolls)
-            return total,rolls
+            return total,rolls,self.names[dice_index]
         
         try:
             for i in range(amount):
                 roll = self.dY(y_side)
                 rolls.append(roll)
             total = sum(rolls)
-            return total,rolls
+            return total,rolls,f'd{y_side}'
         except TypeError:
             return 0,[]
     
@@ -65,13 +89,9 @@ class Dice:
         for i,mult in enumerate(self.multipliers):
             roll_row = self.roll_dice_row(mult,i,self.y_side)
             all_rows.append(roll_row)
-        print(all_rows)
-
-
-
-    def many_mixed_dice(self,mixed_amount,same_amount,dice_function):
-        pass
-    
+        self.all_rolls = all_rows
+        return all_rows
+  
     def get_multipliers(self,iterable):
         '''Return List with int'''
         multipliers=[]
@@ -83,8 +103,7 @@ class Dice:
     def add_multipliers(self,x1,x5):
         self.multipliers = [x + y*5 for x, y in zip(x1, x5)]
         return self.multipliers
-        
-    
+         
     def setup_dY(self,y_side):
         try:
             if int(y_side.get()) !=0:
@@ -96,17 +115,162 @@ class Dice:
             self.multipliers.pop()       
         return self.y_side
     
+    def text_boxing(self):
+        total =0
+        all_texts =[]
+        for row in self.all_rolls:
+            if row[0] !=0:
+                total+= row[0]
+                text_row = f'{row[2]}: {row[1]} -> {row[0]}'
+                all_texts.append(text_row)
+        total+= self.modifier
+        all_texts.append(f'Total {total}')
+        return all_texts
+    
+    def clean_modifier(self,mod):
+        try:
+            mod = int(mod.get())
+        except Exception:
+            mod =0
+        self.modifier = mod
 
-    
-  
+    def clean_large_attacks(self,amount,modifier,AC,adv,disadv):
+        amount = amount.get()
+        if amount.isnumeric() and amount!='0':
+            amount = int(amount)
+        else:
+            amount =1
 
-    
-    
+        try:
+            modifier = int(modifier.get())
+        except Exception:
+            modifier =0
+        
+        AC = AC.get()
+        if AC.isnumeric():
+            AC = int(AC)
+        else:
+            AC =10
 
+        adv = adv.get()
+        disadv = disadv.get()
     
+        out = {
+            'amount':amount,
+            'modifier':modifier,
+            'AC':AC,
+            'adv':adv,
+            'disadv':disadv
+        }
+        return out
+    
+    def get_all_damage_matrix(self,all_dice_matrix):
+        out_all=[]
+        for matrix in all_dice_matrix:
+            out_matrix ={}
+            for key,val in matrix.items():
+                if key == 'name':
+                    out_matrix[key] = val
+                elif key =='modifier':
+                    try:
+                        val = int(val.get())
+                        out_matrix[key] = val
+                    except Exception:
+                        val =0
+                        out_matrix[key] = val
+                elif key =='amount':
+                    val = int(val.get())
+                    out_matrix[key] = val
+                else:
+                    val = val.get()
+                    out_matrix[key] = val
+
+            out_all.append(out_matrix)
+        return out_all
+                
+    def roll_large_attacks(self,attack_matrix):
+        attacks = []
+        for i in range(attack_matrix['amount']):
+            if attack_matrix['adv'] == False and attack_matrix['disadv'] == False:
+                roll = self.roll_attack(attack_matrix['modifier'],
+                                        attack_matrix['AC'])
+            elif attack_matrix['adv']:
+                roll = self.roll_attack(attack_matrix['modifier'],
+                                        attack_matrix['AC'],adv=True)
+            
+            else:
+                roll = self.roll_attack(attack_matrix['modifier'],
+                                        attack_matrix['AC'],adv=False)
+            attacks.append(roll)
+        return attacks
+    
+    def evaluate_hits(self,attacks):
+        hits=0
+        crits=0
+        for attack in attacks:
+            if attack[0] =='crit':
+                crits+=1
+            elif attack[0] == 'hit':
+                hits+=1
+        return hits,crits
+
+    def roll_attack(self,modifier,AC,adv=None):
+        if adv == None:
+            roll= self.d20()
+        elif adv:
+            roll = self.roll_adv(self.d20)
+        else:
+            roll = self.roll_disadv(self.d20)
+
+        if roll == 20:
+            return 'crit',roll+modifier
+        elif roll == 1:
+            return 'miss',roll+modifier
+        elif (roll+modifier) >= AC:
+            return 'hit',roll+modifier
+        else:
+            return 'miss',roll+modifier
+        
+    def roll_adv(self,dice_function):
+        roll1 = dice_function()
+        roll2 = dice_function()
+        return max(roll1,roll2)
+    
+    def roll_disadv(self,dice_function):
+        roll1 = dice_function()
+        roll2 = dice_function()
+        return min(roll1,roll2)
+        
+    def roll_damage(self,dice_function,modifier,crit=False):
+        if crit:
+            roll1 = dice_function()
+            roll2 = dice_function()
+            roll = roll1+roll2+modifier
+            return roll
+        else:
+            roll = dice_function() + modifier
+            return roll
+
+    def roll_all_damage(self,hits,damage_matrix):
+        pass
+
+    def roll_one_damage_type(self,damage_dice,crit):
+        for i in range(damage_dice['amount']):
+            if damage_dice['amount'] !=0:
+                dice_func = self.damage_dice[damage_dice['name']]
+                roll = self.roll_damage(dice_function=dice_func,
+                    modifier=damage_dice['modifier'],crit=crit)
+                
+            else:
+                print('here')
+                roll = 0
+
+        
+
+            
 
 
 
 if __name__=='__main__':
     d = Dice()
-    
+    print(d.roll_one_damage_type())
