@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import scrolledtext
 import json,os
 from character5 import Character
-import dice 
+from dice import Dice
 
 
 folder_path = 'save_files5/'
@@ -14,6 +14,7 @@ def list_json_files(folder_path):
 
 class FkGui4:
     def __init__(self):
+        
         self.root = tk.Tk()
         
         self.root_frame = tk.Frame(self.root)
@@ -1061,18 +1062,22 @@ class FkGui4:
             bottom_frame = tk.LabelFrame(window,text='The Hand')
             bottom_frame.grid(row=1,column=0,padx=10,sticky='news')
             
+            x1_widgets = []
             x1_spin_fr = tk.LabelFrame(tower_frame,text='x1')
             x1_spin_fr.grid(row=0,column=0)
             for i in range(8):
                 spin_x1 = tk.Spinbox(x1_spin_fr,from_=0,to='infinity',width=5)
                 spin_x1.grid(row=i,column=0,padx=5,pady=5)
+                x1_widgets.append(spin_x1)
             
+            x5_widgets =[]
             x5_spin_fr = tk.LabelFrame(tower_frame,text='x5')
             x5_spin_fr.grid(row=0,column=1)
             for i in range(8):
-                spin_x1 = tk.Spinbox(x5_spin_fr,from_=0,to='infinity',width=5)
-                spin_x1.grid(row=i,column=0,padx=5,pady=5)
-            
+                spin_x5 = tk.Spinbox(x5_spin_fr,from_=0,to='infinity',width=5)
+                spin_x5.grid(row=i,column=0,padx=5,pady=5)
+                x5_widgets.append(spin_x5)
+
             dice_frame = tk.LabelFrame(tower_frame,text='Dice')
             dice_frame.grid(row=0,column=2)
 
@@ -1093,8 +1098,28 @@ class FkGui4:
 
             
 
-            def roll_dice():
-                pass
+            def roll_dice(): 
+                dice = Dice()
+                # cleaned_x1 = self.dice.clean_dice(x1_widgets)
+                # cleaned_x5 = self.dice.clean_dice(x5_widgets)
+                # x1_rolls=[]
+                # x5_rolls = []
+                # for i,amount in enumerate(cleaned_x1):
+                #     same_dice = self.dice.many_same_dice(i,amount=amount)
+                #     x1_rolls.append(same_dice)
+              
+                # for i,amount in enumerate(cleaned_x5):
+                #     same_dice = self.dice.many_same_dice(i,amount=amount)
+                #     x5_rolls.append(same_dice)
+                # all_rolls=[*x1_rolls,*x5_rolls]
+                cleaned_x1= dice.get_multipliers(x1_widgets)
+                cleaned_x5 = dice.get_multipliers(x5_widgets)
+                
+                dice.add_multipliers(cleaned_x1,cleaned_x5)
+                dice.setup_dY(dY_entry)
+                dice.roll_all()
+
+
             def reset_page():
                 pass
             
