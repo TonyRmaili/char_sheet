@@ -240,7 +240,7 @@ class Dice:
         roll1 = dice_function()
         roll2 = dice_function()
         return min(roll1,roll2)
-        
+
     def roll_damage(self,dice_function,modifier,crit=False):
         if crit:
             roll1 = dice_function()
@@ -251,25 +251,58 @@ class Dice:
             roll = dice_function() + modifier
             return roll
 
-    def roll_all_damage(self,hits,damage_matrix):
-        pass
+    def roll_all_damage_with_hits(self,hits,all_damage_matrix):
+        hit = hits[0]
+        crit = hits[1]
+        hit_out = []
+        crit_out=[]
+        for i in range(hit):
+            roll = self.roll_all_damage(all_damage_matrix,False)
+            hit_out.append(roll)
+        for i in range(crit):
+            roll = self.roll_all_damage(all_damage_matrix,True)
+            crit_out.append(roll)
 
-    def roll_one_damage_type(self,damage_dice,crit):
-        for i in range(damage_dice['amount']):
-            if damage_dice['amount'] !=0:
-                dice_func = self.damage_dice[damage_dice['name']]
-                roll = self.roll_damage(dice_function=dice_func,
-                    modifier=damage_dice['modifier'],crit=crit)
-                
-            else:
-                print('here')
-                roll = 0
+        return hit_out,crit_out
+
+    def roll_all_damage(self,all_damage_matrix,crit):
+        rolls=[]
+        for row in all_damage_matrix:
+            matrix = self.roll_damage_matrix(row,crit=crit)
+            rolls.append(matrix)
+        return rolls
+
+    def roll_damage_matrix(self,dice_matrix,crit):
+        rolls = []        
+        for i in range(dice_matrix['amount']):
+            tag=self.damage_dice[dice_matrix['name']]
+            roll = self.roll_damage(tag,
+                    dice_matrix['mod'],crit=crit)
+            rolls.append(roll)
+
+        total = sum(rolls)
+        out = {
+            'name':dice_matrix['name'],
+            'type':dice_matrix['type'],
+            'total':total,
+            'array':rolls
+        }
+        return out
+            
+    def format_damage_dice(self,dice_matrix):
+        amount = dice_matrix['amount']
+        name =dice_matrix['name']
+        mod = dice_matrix['mod']
+        dtype =dice_matrix['type']
+        text = f'{amount}{name}+{mod} {dtype}\n'
+        return text
+    
+    
 
         
+    
 
-            
-
-
+        
 
 if __name__=='__main__':
     d = Dice()

@@ -1148,7 +1148,7 @@ class FkGui4:
         atk_left_fr = tk.LabelFrame(attacks_fr,text='To Hit')
         atk_left_fr.grid(row=0,column=0,padx=10,pady=10,sticky='news')
         atk_right_fr= tk.LabelFrame(attacks_fr,text='Damage')
-        atk_right_fr.grid(row=0,column=1,padx=10,pady=10,sticky='news')
+        atk_right_fr.grid(row=1,column=0,padx=10,pady=10,sticky='news')
 
         saves_fr = tk.LabelFrame(window,text='Large Saves')
         saves_fr.grid(row=1,column=0,padx=10,pady=10,sticky='news')
@@ -1191,41 +1191,68 @@ class FkGui4:
         disadv_entry.grid(row=4,column=1)
 
         # attacks frame -right
-        all_dice_matrix = []
-        for i,name in enumerate(dice.damage_dice):
-            spin_box = tk.Spinbox(atk_right_fr,from_=0,to='infinity',width=3)
-            spin_box.grid(row=i,column=0)
-            label = tk.Label(atk_right_fr,text=f'x {name} +')
-            label.grid(row=i,column=1,sticky='w')
-            mod_entry = tk.Entry(atk_right_fr,width=3)
-            mod_entry.grid(row=i,column=2)
-            dmg_type = ttk.Combobox(atk_right_fr,values=dice.damage_types,width=11)
-            dmg_type.grid(row=i,column=3)
+        def add_damage_dice():
+            text_widget.insert(tk.END, '')
+            amount = int(dice_amount.get())
+            if amount ==0:
+                return {}
+            name = dice_name.get()
+            if name =='':
+                return {}
+            try:
+                mod = int(mod_entry.get())
+            except ValueError:
+                mod = 0
+            dtype = dmg_type.get()
+            dice_matrix = {
+                'amount':amount,
+                'name':name,
+                'mod':mod,
+                'type':dtype
+            }
 
-            damage_matrix = {'name':name,
-                      'amount':spin_box,
-                      'modifier':mod_entry,
-                      'type':dmg_type}
-            all_dice_matrix.append(damage_matrix)
-        
-        
+            all_dice_matrix.append(dice_matrix)
+            format_dice = dice.format_damage_dice(dice_matrix=dice_matrix)
+            text_widget.insert(tk.END, f'{format_dice}')
             
+
+
+        all_dice_matrix = []
+        dice_amount = tk.Spinbox(atk_right_fr,from_=0,to='infinity',width=3)
+        dice_amount.grid(row=0,column=0)
+        xlabel=tk.Label(atk_right_fr,text='x')
+        xlabel.grid(row=0,column=1)
+        dice_name = ttk.Combobox(atk_right_fr,values=list(dice.damage_dice.keys()),width=4)
+        dice_name.grid(row=0,column=2,sticky='w')
+        plus_lb =tk.Label(atk_right_fr,text='+')
+        plus_lb.grid(row=0,column=3)
+        mod_entry = tk.Entry(atk_right_fr,width=3)
+        mod_entry.grid(row=0,column=4)
+        dmg_type = ttk.Combobox(atk_right_fr,values=dice.damage_types,width=11)
+        dmg_type.grid(row=0,column=5,padx=5)
+        add_damage_dice_btn = tk.Button(atk_right_fr,text='Add Damage',
+                command=add_damage_dice,width=10)
+        add_damage_dice_btn.grid(row=0,column=6)
+
+    
         # attacks button
-        def roll_attacks(all):
+        def roll_attacks():
             large_attacks_matrix= dice.clean_large_attacks(amount_entry,modifier_entry,
                 AC_entry,adv_var,disadv_var)
             
             attacks=dice.roll_large_attacks(large_attacks_matrix)
             hits= dice.evaluate_hits(attacks=attacks)
-            damage_matrix= dice.get_all_damage_matrix(all)
+            test_hits = (1,1)
 
-            print(dice.roll_one_damage_type(damage_dice=damage_matrix[0],crit=False))
-            # print(damage_matrix[0])
+            print(dice.roll_all_damage_with_hits(hits=test_hits,
+                                                 all_damage_matrix=all_dice_matrix))
+            
+            
             
         
         attack_btn = tk.Button(attacks_fr,text='Attack!',
-            command=lambda all = all_dice_matrix:roll_attacks(all))
-        attack_btn.grid(row=1,column=1,sticky='news')
+            command=roll_attacks)
+        attack_btn.grid(row=2,column=0,sticky='news')
 
         # text frame
         text_widget = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=30, height=10)
