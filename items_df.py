@@ -56,6 +56,7 @@
 
 import tkinter as tk
 
+
 def checkbutton1_changed():
     var2.set(0)  # Uncheck checkbutton2 when checkbutton1 is checked
 

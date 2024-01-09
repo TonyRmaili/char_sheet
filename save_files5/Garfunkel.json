@@ -1,0 +1,357 @@
+{
+    "Name": "Garfunkel",
+    "Max Hp": 65,
+    "Max Hit Dice": 7,
+    "Total level": 7,
+    "Prof. Bonus": 3,
+    "AC": 21,
+    "Initiative": 6,
+    "Speed": 30,
+    "Attack": 9,
+    "Spell Attack": 5,
+    "Save DC": 13,
+    "Max spells prepared": 3,
+    "Inspiration": 0,
+    "Strength": 12,
+    "Dexterity": 18,
+    "Constitution": 18,
+    "Inteligence": 11,
+    "Wisdom": 13,
+    "Charisma": 14,
+    "Hp": 65,
+    "Hit Dice": 7,
+    "Temp Hp": 0,
+    "Gold": 688,
+    "Spells Known": {
+        "cantrip": [],
+        "tier1": [
+            {
+                "name": "Bless",
+                "components": "VSM",
+                "innate": false,
+                "range": "Range",
+                "duration": "Minutes",
+                "action": "Action",
+                "concentration": true,
+                "text": "You bless up to three creatures of your choice within range. Whenever a target makes an attack roll or a saving throw before the spell ends, the target can roll a d4 and add the number rolled to the attack roll or saving throw.\n\nAt Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, you can target one additional creature for each slot level above 1st.",
+                "school": "Enchantment"
+            },
+            {
+                "name": "Shield of Faith",
+                "components": "VSM",
+                "innate": false,
+                "range": "Range",
+                "duration": "Minutes",
+                "action": "Bonus Action",
+                "concentration": true,
+                "text": "",
+                "school": "Abjuration"
+            },
+            {
+                "name": "Divine Favor",
+                "components": "VS",
+                "innate": false,
+                "range": "Self",
+                "duration": "Minutes",
+                "action": "Bonus Action",
+                "concentration": true,
+                "text": "Your prayer empowers you with divine radiance. Until the spell ends, your weapon attacks deal an extra 1d4 radiant damage on a hit.",
+                "school": "Evocation"
+            },
+            {
+                "name": "Armor of Agathys",
+                "components": "VSM",
+                "innate": true,
+                "range": "Self",
+                "duration": "Hours",
+                "action": "Action",
+                "concentration": false,
+                "text": "",
+                "school": "Abjuration"
+            },
+            {
+                "name": "Command",
+                "components": "V",
+                "innate": true,
+                "range": "Range",
+                "duration": "Rounds",
+                "action": "Action",
+                "concentration": false,
+                "text": "",
+                "school": "Enchantment"
+            }
+        ],
+        "tier2": [],
+        "tier3": [],
+        "tier4": [],
+        "tier5": [],
+        "tier6": [],
+        "tier7": [],
+        "tier8": [],
+        "tier9": []
+    },
+    "Spell Slots": {
+        "tier1": {
+            "max": 3,
+            "current": 3
+        },
+        "tier2": {
+            "max": 0,
+            "current": 0
+        },
+        "tier3": {
+            "max": 0,
+            "current": 0
+        },
+        "tier4": {
+            "max": 0,
+            "current": 0
+        },
+        "tier5": {
+            "max": 0,
+            "current": 0
+        },
+        "tier6": {
+            "max": 0,
+            "current": 0
+        },
+        "tier7": {
+            "max": 0,
+            "current": 0
+        },
+        "tier8": {
+            "max": 0,
+            "current": 0
+        },
+        "tier9": {
+            "max": 0,
+            "current": 0
+        }
+    },
+    "Saving Throws": {
+        "stre": false,
+        "dex": false,
+        "con": false,
+        "inte": false,
+        "wis": true,
+        "cha": true
+    },
+    "Skills": {
+        "Acrobatics": [
+            true,
+            "Dexterity"
+        ],
+        "Animal Handling": [
+            false,
+            "Wisdom"
+        ],
+        "Arcana": [
+            false,
+            "Inteligence"
+        ],
+        "Athletics": [
+            true,
+            "Strength"
+        ],
+        "Deception": [
+            true,
+            "Charisma"
+        ],
+        "History": [
+            false,
+            "Inteligence"
+        ],
+        "Insight": [
+            true,
+            "Wisdom"
+        ],
+        "Intimidation": [
+            false,
+            "Charisma"
+        ],
+        "Investigation": [
+            false,
+            "Inteligence"
+        ],
+        "Medicine": [
+            false,
+            "Wisdom"
+        ],
+        "Nature": [
+            false,
+            "Inteligence"
+        ],
+        "Perception": [
+            false,
+            "Wisdom"
+        ],
+        "Performance": [
+            false,
+            "Charisma"
+        ],
+        "Persuasion": [
+            false,
+            "Charisma"
+        ],
+        "Religion": [
+            false,
+            "Inteligence"
+        ],
+        "Sleight of Hand": [
+            false,
+            "Dexterity"
+        ],
+        "Stealth": [
+            true,
+            "Dexterity"
+        ],
+        "Survival": [
+            false,
+            "Wisdom"
+        ]
+    },
+    "Feats and Traits": [
+        {
+            "name": "Expertise",
+            "tag": null,
+            "DC": null,
+            "text": "2x PB on 2 skills",
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Thieves cant",
+            "tag": null,
+            "DC": null,
+            "text": "special thief language",
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Cunning Action",
+            "tag": null,
+            "DC": null,
+            "text": "can dissenge,dash or stealth",
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Fancy footwork",
+            "tag": null,
+            "DC": null,
+            "text": null,
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Steady Aim",
+            "tag": null,
+            "DC": null,
+            "text": null,
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Lay on Hands",
+            "tag": "LoH",
+            "DC": null,
+            "text": "heal = paladin lvl",
+            "reset": "Long Rest",
+            "charges": {
+                "max": 15,
+                "current": 15
+            }
+        },
+        {
+            "name": "Divine Smite",
+            "tag": null,
+            "DC": null,
+            "text": "cost spell slots \n+2d8 radient ",
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Sentinel",
+            "tag": null,
+            "DC": null,
+            "text": "Feat",
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Fighting Style",
+            "tag": null,
+            "DC": null,
+            "text": "Defense",
+            "reset": null,
+            "charges": null
+        },
+        {
+            "name": "Channel Divinity",
+            "tag": null,
+            "DC": null,
+            "text": null,
+            "reset": "Short Rest",
+            "charges": {
+                "max": 1,
+                "current": 1
+            }
+        }
+    ],
+    "Notes": [],
+    "Inventory": {
+        "Tool": [],
+        "Armor": [
+            {
+                "name": "Dark leather",
+                "rarity": "Rare",
+                "type": "Armor",
+                "attunement": false,
+                "text": "Studded +1 \nNecro res"
+            },
+            {
+                "name": "Holy Shield",
+                "rarity": "Uncommon",
+                "type": "Armor",
+                "attunement": false,
+                "text": "+1 shield\nHoly focus"
+            }
+        ],
+        "Weapon": [
+            {
+                "name": "Heavy Xbox",
+                "rarity": "Common",
+                "type": "Weapon",
+                "attunement": false,
+                "text": "Xbox "
+            },
+            {
+                "name": "Hand xbox",
+                "rarity": "Common",
+                "type": "Weapon",
+                "attunement": false,
+                "text": "dfvdf"
+            },
+            {
+                "name": "Dark Rapier",
+                "rarity": "Very Rare",
+                "type": "Weapon",
+                "attunement": false,
+                "text": "+2 rapier\n+1d8 necrotic"
+            },
+            {
+                "name": "UI Rapier",
+                "rarity": "Very Rare",
+                "type": "Weapon",
+                "attunement": false,
+                "text": "???????????????????\n???????????"
+            }
+        ],
+        "Consumable": [],
+        "Wondrous": [],
+        "Other": [],
+        "Potion": [],
+        "Scroll": [],
+        "Ring": []
+    }
+}

@@ -1237,19 +1237,28 @@ class FkGui4:
     
         # attacks button
         def roll_attacks():
+            text_widget.delete(1.0, tk.END)
             large_attacks_matrix= dice.clean_large_attacks(amount_entry,modifier_entry,
                 AC_entry,adv_var,disadv_var)
             
             attacks=dice.roll_large_attacks(large_attacks_matrix)
-            hits= dice.evaluate_hits(attacks=attacks)
-            test_hits = (1,1)
+            
+            landed_atks= dice.evaluate_hits(attacks=attacks)
+            landed_atks = (2,3)
+            all_dice_matrix =[
+                {'amount': 3, 'name': 'd4', 'mod': 5, 'type': 'Slashing'},
+                {'amount': 1, 'name': 'd12', 'mod': 3, 'type': 'Slashing'},
+                {'amount': 2, 'name': 'd6', 'mod': 2, 'type': 'Fire'}
+                ]
 
-            print(dice.roll_all_damage_with_hits(hits=test_hits,
-                                                 all_damage_matrix=all_dice_matrix))
             
+            dmg_by_type=dice.roll_all_damage_1(landed_atks=landed_atks,
+                    all_damage_matrix=all_dice_matrix)
+
+            self.damage_to_text(dmg_by_type,text_widget)
             
-            
-        
+
+
         attack_btn = tk.Button(attacks_fr,text='Attack!',
             command=roll_attacks)
         attack_btn.grid(row=2,column=0,sticky='news')
@@ -1259,6 +1268,40 @@ class FkGui4:
         text_widget.insert(tk.END, '')
         text_widget.pack(padx=10, pady=10)
 
+    def damage_to_text(self,dmg_by_type,text_widget):
+        for dtype,dice in dmg_by_type.items():
+            if not self.check_empty_text(dct=dmg_by_type[dtype]):
+                dtype_font = ("Verdana", 15)
+                self.text_inserter(text=dtype,font=dtype_font,
+                color='black',widget=text_widget,tag="header")
+                
+                for size,values in dice.items():
+                    if values != []:
+                        self.text_inserter(text=f'   {size}',
+                                font=("Verdana", 12),
+                                color='blue',widget=text_widget,tag='size')
+                        for roll in values:
+                            if not roll[3]:
+                                if not roll[0] ==[]:
+                                    dice_font = ("Helvetica", 10)
+                                    text_widget.tag_configure("hits", font=dice_font)
+                                    text_widget.insert(tk.END, f"{roll[0]} {roll[1]} {roll[2]}\n", "hits")
+                                
+                            else:
+                                if not roll[0] ==[]:
+                                    dice_font = ("Helvetica", 10)
+                                    text_widget.tag_configure("crits", font=dice_font,foreground="red")
+                                    text_widget.insert(tk.END, f"{roll[0]} {roll[1]} {roll[2]}\n", "crits")
+            
+
+    def text_inserter(self,text,font,color,widget,tag):
+        widget.tag_configure(tag,font=font,foreground=color)
+        widget.insert(tk.END,f"{text}\n",tag)
+                
+    def check_empty_text(self, dct):
+        return all(all(element == [] for element in val) for val in dct.values())
+
+            
 
     def character_files_menu(self):
         self.char_menu = tk.Menu(self.menu_bar,font=('MV Boli',15),tearoff=0)

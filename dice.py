@@ -1,4 +1,5 @@
 from random import randint
+from copy import deepcopy
 
 class Dice:
     def __init__(self):
@@ -14,6 +15,7 @@ class Dice:
         self.names =['d4','d6','d8','d10',
                      'd12','d20','d100']
         
+
         self.damage_dice = {
             'd4':self.d4,
             'd6':self.d6,
@@ -241,6 +243,102 @@ class Dice:
         roll2 = dice_function()
         return min(roll1,roll2)
 
+    def format_damage_dice(self,dice_matrix):
+        amount = dice_matrix['amount']
+        name =dice_matrix['name']
+        mod = dice_matrix['mod']
+        dtype =dice_matrix['type']
+        text = f'{amount}{name}+{mod} {dtype}\n'
+        return text
+
+    
+    def dmg_by_type(self):
+        dmg_by_type = {}
+        for dtype in self.damage_types:
+            dmg_by_type[dtype] = {}
+        
+        for dtype,value in dmg_by_type.items():
+            for dice_type in self.damage_dice.keys():
+                value[dice_type] = []
+        return dmg_by_type
+        
+    def roll_damage_1(self,amount,dice_function,mod,crit=False):
+        rolls=[] 
+        total = 0
+        if not crit:
+            for i in range(amount):
+                roll = self.damage_dice[dice_function]()
+                rolls.append(roll)
+            if amount !=0:
+                total = sum(rolls)+mod
+         
+
+        else:
+            for i in range(amount*2):
+                roll = self.damage_dice[dice_function]()
+                rolls.append(roll)
+            if amount !=0:
+                total = sum(rolls)+mod
+        return (rolls,total)
+
+    def roll_all_damage_1(self,landed_atks,all_damage_matrix):
+        hits = landed_atks[0]
+        crits = landed_atks[1]
+        dmg_by_type = self.dmg_by_type()
+        values = []
+
+        # hits
+        for matrix in all_damage_matrix:
+            if matrix["type"] in dmg_by_type:
+                amount = matrix["amount"]
+                name = matrix["name"]
+                mod = matrix["mod"]
+                dtype = matrix["type"]
+                crit = False
+                total_dice = hits*amount
+
+                roll = self.roll_damage_1(amount=total_dice,
+                    dice_function=name,mod=mod)
+                total = roll[1]
+                rolls = roll[0]
+
+                values.append((rolls,mod,total,
+                        name,dtype,crit))
+                
+        # crits
+        for matrix in all_damage_matrix:
+            if matrix["type"] in dmg_by_type:
+                amount = matrix["amount"]
+                name = matrix["name"]
+                mod = matrix["mod"]
+                dtype = matrix["type"]
+                crit = True
+                total_dice = amount*crits
+
+                roll = self.roll_damage_1(amount=total_dice,
+                    dice_function=name,mod=mod)
+                total = roll[1]
+                rolls = roll[0]
+
+                values.append((rolls,mod,total,
+                        name,dtype,crit))
+        
+        for instance in values:
+            rolls = instance[0]
+            mod = instance[1]
+            total = instance[2]
+            name = instance[3]
+            dtype = instance[4]
+            crit = instance[5]
+            filterd_vals = (rolls,mod,total,crit)
+            if dtype in dmg_by_type:
+                if name in dmg_by_type[dtype]:
+                    dmg_by_type[dtype][name].append(filterd_vals)
+
+        return dmg_by_type
+        
+            
+
     def roll_damage(self,dice_function,modifier,crit=False):
         if crit:
             roll1 = dice_function()
@@ -256,15 +354,20 @@ class Dice:
         crit = hits[1]
         hit_out = []
         crit_out=[]
+
+        texts ={}
+        for dtype in self.damage_types:
+            texts[dtype] = []
+
         for i in range(hit):
             roll = self.roll_all_damage(all_damage_matrix,False)
             hit_out.append(roll)
+        
         for i in range(crit):
             roll = self.roll_all_damage(all_damage_matrix,True)
+            
             crit_out.append(roll)
-
-        return hit_out,crit_out
-
+ 
     def roll_all_damage(self,all_damage_matrix,crit):
         rolls=[]
         for row in all_damage_matrix:
@@ -289,20 +392,113 @@ class Dice:
         }
         return out
             
-    def format_damage_dice(self,dice_matrix):
-        amount = dice_matrix['amount']
-        name =dice_matrix['name']
-        mod = dice_matrix['mod']
-        dtype =dice_matrix['type']
-        text = f'{amount}{name}+{mod} {dtype}\n'
-        return text
-    
-    
+    def sort_damage_type(self,all_damage):
+        hits = all_damage[0]
+        crits = all_damage[1]
+        
+        for hit in hits:
+            ohits = self.damage_to_dict(hit,crit=False)
+            
+        for crit in crits: 
+            ocrits= self.damage_to_dict(crit,crit=True)
+            
+        merged_dict = ohits.copy()
+        for key, value in ocrits.items():
+            if key not in merged_dict:
+                merged_dict[key] = value
+            else:
+                merged_dict[key].extend(value)
 
+        return merged_dict
+        
+    def damage_to_dict(self,damages,crit=False):
+        texts ={}
+        for dtype in self.damage_types:
+            texts[dtype] = []
+
+        for damage in damages:
+            dtype= damage['type']
+            del damage['type']
+            damage['crit'] = crit
+            texts[dtype].append(damage)
+        return texts
+
+   
+    
+    def clean_damage_1(self,all_damage_matrix,landed_atks):
+        hits=landed_atks[0]
+        crits=landed_atks[1]
+        
+        out_dict ={}
+        for dtype in self.damage_types:
+            out_dict[dtype] = []
+
+        hit_dict = out_dict.copy()
+        crit_dict = out_dict.copy()
+
+        for dmg in all_damage_matrix:
+            dice_total = dmg['amount'] * hits
+            dice_type = self.damage_dice[dmg['name']]
+            mod = dmg['mod']
+            dtype = dmg['type']
+            rolls = []
+            if dice_total !=0:
+                for i in range(dice_total):
+                    roll = self.roll_damage(dice_function=dice_type,
+                        modifier=mod,crit=False)
+                    rolls.append(roll)
+                total = sum(rolls)
+                hit_dict[dtype].append([rolls,total,dmg['name'],False])
+
+        for dmg in all_damage_matrix:
+            dice_total = dmg['amount'] * crits
+            dice_type = self.damage_dice[dmg['name']]
+            mod = dmg['mod']
+            dtype = dmg['type']
+            rolls = []
+            if dice_total !=0:
+                for i in range(dice_total):
+                    roll = self.roll_damage(dice_function=dice_type,
+                        modifier=mod,crit=True)
+                    rolls.append(roll)
+                total = sum(rolls)
+                crit_dict[dtype].append([rolls,total,dmg['name'],True])
+    
+        total =self.clean_damage_2(hit_dict=hit_dict)
+        return total
+    
+    def clean_damage_2(self,hit_dict):
+        total = 0
+        allparsed_dmg=[]
+        for dtype,values in hit_dict.items():
+            if values != []:
+                type_total = self.get_total_dmg(values)
+                total += type_total
+                parsed_dmg =self.parse_damage(dtype,values)
+                allparsed_dmg.append(parsed_dmg)
+        return total,allparsed_dmg
+
+    def parse_damage(self,dtype,values):
+        out = {dtype:[]}
+        
+        for value in values:
+            if value[3]:
+                crit = value[0],value[1],value[2],value[3]
+                out[dtype].append(crit)
+            else:
+                hit = value[0],value[1],value[2],value[3]
+                out[dtype].append(hit)
+        return out
         
     
 
-        
+    def get_total_dmg(self,values):
+        total =0
+        for value in values:
+            total+=value[1]
+        return total
+    
+
 
 if __name__=='__main__':
     d = Dice()

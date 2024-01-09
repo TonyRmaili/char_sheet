@@ -1,0 +1,14 @@
+expertise
+color expertise or other special values
+
+manage closing/opening of windows
+
+edit skills and spells - btn next to delete
+
+add hiding of skills option to frontpage. Allow visibility from details
+
+better location of update button. 
+
+reseting widgets after done ; update page ,
+
+make a proper backend, frotend class system
