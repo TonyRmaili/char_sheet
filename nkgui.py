@@ -1258,7 +1258,7 @@ class FkGui4:
             self.damage_to_text(dmg_by_type,text_widget)
             self.text_summary(dmg_by_type=dmg_by_type,landed_atks=landed_atks,
                               widget=text_summary)
-
+            print(dmg_by_type)
 
         attack_btn = tk.Button(attacks_fr,text='Attack!',
             command=roll_attacks)

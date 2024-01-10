@@ -423,8 +423,6 @@ class Dice:
             texts[dtype].append(damage)
         return texts
 
-   
-    
     def clean_damage_1(self,all_damage_matrix,landed_atks):
         hits=landed_atks[0]
         crits=landed_atks[1]
