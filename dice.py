@@ -270,15 +270,15 @@ class Dice:
                 roll = self.damage_dice[dice_function]()
                 rolls.append(roll)
             if amount !=0:
-                total = sum(rolls)+mod
+                total = sum(rolls)
          
-
         else:
             for i in range(amount*2):
                 roll = self.damage_dice[dice_function]()
                 rolls.append(roll)
             if amount !=0:
-                total = sum(rolls)+mod
+                total = sum(rolls)
+
         return (rolls,total)
 
     def roll_all_damage_1(self,landed_atks,all_damage_matrix):
@@ -298,8 +298,8 @@ class Dice:
                 total_dice = hits*amount
 
                 roll = self.roll_damage_1(amount=total_dice,
-                    dice_function=name,mod=mod)
-                total = roll[1]
+                    dice_function=name,mod=mod,crit=crit)
+                total = roll[1] +mod*hits
                 rolls = roll[0]
 
                 values.append((rolls,mod,total,
@@ -316,8 +316,8 @@ class Dice:
                 total_dice = amount*crits
 
                 roll = self.roll_damage_1(amount=total_dice,
-                    dice_function=name,mod=mod)
-                total = roll[1]
+                    dice_function=name,mod=mod,crit=crit)
+                total = roll[1] +mod*crits
                 rolls = roll[0]
 
                 values.append((rolls,mod,total,

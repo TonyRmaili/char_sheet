@@ -1244,19 +1244,20 @@ class FkGui4:
             attacks=dice.roll_large_attacks(large_attacks_matrix)
             
             landed_atks= dice.evaluate_hits(attacks=attacks)
-            landed_atks = (2,3)
-            all_dice_matrix =[
-                {'amount': 3, 'name': 'd4', 'mod': 5, 'type': 'Slashing'},
-                {'amount': 1, 'name': 'd12', 'mod': 3, 'type': 'Slashing'},
-                {'amount': 2, 'name': 'd6', 'mod': 2, 'type': 'Fire'}
-                ]
+            # landed_atks = (1,1)
+            # all_dice_matrix =[
+            #     {'amount': 3, 'name': 'd4', 'mod': 5, 'type': 'Slashing'},
+            #     {'amount': 1, 'name': 'd12', 'mod': 3, 'type': 'Slashing'},
+            #     {'amount': 2, 'name': 'd6', 'mod': 2, 'type': 'Fire'}
+            #     ]
 
             
             dmg_by_type=dice.roll_all_damage_1(landed_atks=landed_atks,
                     all_damage_matrix=all_dice_matrix)
 
             self.damage_to_text(dmg_by_type,text_widget)
-            
+            self.text_summary(dmg_by_type=dmg_by_type,landed_atks=landed_atks,
+                              widget=text_summary)
 
 
         attack_btn = tk.Button(attacks_fr,text='Attack!',
@@ -1268,6 +1269,10 @@ class FkGui4:
         text_widget.insert(tk.END, '')
         text_widget.pack(padx=10, pady=10)
 
+        text_summary = scrolledtext.ScrolledText(text_fr, wrap=tk.WORD, width=30, height=5)
+        text_summary.insert(tk.END, '')
+        text_summary.pack(padx=10, pady=10)
+
     def damage_to_text(self,dmg_by_type,text_widget):
         for dtype,dice in dmg_by_type.items():
             if not self.check_empty_text(dct=dmg_by_type[dtype]):
@@ -1277,7 +1282,7 @@ class FkGui4:
                 
                 for size,values in dice.items():
                     if values != []:
-                        self.text_inserter(text=f'   {size}',
+                        self.text_inserter(text=f' {size}',
                                 font=("Verdana", 12),
                                 color='blue',widget=text_widget,tag='size')
                         for roll in values:
@@ -1285,14 +1290,35 @@ class FkGui4:
                                 if not roll[0] ==[]:
                                     dice_font = ("Helvetica", 10)
                                     text_widget.tag_configure("hits", font=dice_font)
-                                    text_widget.insert(tk.END, f"{roll[0]} {roll[1]} {roll[2]}\n", "hits")
+                                    text_widget.insert(tk.END, f"{roll[0]}-> {roll[2]} : mod={roll[1]}\n", "hits")
                                 
                             else:
                                 if not roll[0] ==[]:
                                     dice_font = ("Helvetica", 10)
                                     text_widget.tag_configure("crits", font=dice_font,foreground="red")
-                                    text_widget.insert(tk.END, f"{roll[0]} {roll[1]} {roll[2]}\n", "crits")
+                                    text_widget.insert(tk.END, f"{roll[0]}-> {roll[2]} mod={roll[1]}\n", "crits")
             
+
+    def text_summary(self,dmg_by_type,landed_atks,widget):
+        total =0
+        for dice in dmg_by_type.values():
+            for roll in dice.values():
+                for val in roll:
+                    if val:
+                        total+=val[2]
+        
+        self.text_inserter(text=f"Landed Attacks {sum(landed_atks)}",
+            font=("Verdana", 12),color='black',widget=widget,tag="landed_atk")
+        
+        self.text_inserter(text=f"Hits: {landed_atks[0]}",
+            font=("Helvetica", 10),color='blue',widget=widget,tag="hits")
+        
+        self.text_inserter(text=f"Crits: {landed_atks[1]}",
+            font=("Helvetica", 10),color='red',widget=widget,tag="crits")
+        
+        self.text_inserter(text=f"Total Damage: {total}",
+            font=("Helvetica", 12),color='black',widget=widget,tag="total")
+
 
     def text_inserter(self,text,font,color,widget,tag):
         widget.tag_configure(tag,font=font,foreground=color)
