@@ -338,7 +338,7 @@ class Dice:
         return dmg_by_type
         
             
-
+# to be removed
     def roll_damage(self,dice_function,modifier,crit=False):
         if crit:
             roll1 = dice_function()
@@ -488,15 +488,12 @@ class Dice:
                 out[dtype].append(hit)
         return out
         
-    
-
     def get_total_dmg(self,values):
         total =0
         for value in values:
             total+=value[1]
         return total
     
-
 
 if __name__=='__main__':
     d = Dice()

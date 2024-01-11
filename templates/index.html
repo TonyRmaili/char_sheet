@@ -4,20 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask Form Example</title>
+    <style>
+        /* Add some CSS styling for layout */
+        .form-container > div {
+            margin-bottom: 10px; /* Optional: Add some margin between the label-input pairs */
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Flask Form Example</h1>
+    <h1>Large Attack Rolls</h1>
 
     <form method="POST">
-        <label for="user_input">Enter something:</label>
-        <input type="text" id="user_input" name="user_input" required>
-        <button type="submit">Submit</button>
-    </form>
+        <!-- Left Container -->
+        <div>
+            <label for="atk_amount">Amount of Attacks:</label>
+            <input type="number" id="atk_amount" name="atk_amount" min="1" value="1">
+        </div>
+        <div>
+            <label for="atk_mod">Attack Modifier:</label>
+            <input type="number" id="atk_mod" name="atk_mod" value="0">
+        </div>
+        <div>
+            <label for="AC">Target AC:</label>
+            <input type="number" id="AC" name="AC" min="0" value="10">
+        </div>
+        <div>
+            <label for="adv">Advantage:</label>
+            <select id="adv" name="adv" required>
+                <option value="True">True</option>
+                <option value="False">False</option>
+            </select>
+        </div>
+        <div>
+            <label for="dis_adv">Disadvantage:</label>
+            <select id="dis_adv" name="dis_adv" required>
+                <option value="True">True</option>
+                <option value="False">False</option>
+            </select>
+        </div>
 
-    {% if user_input %}
-        <h2>Result:</h2>
-        <p>You entered: {{ user_input }}</p>
-    {% endif %}
+        <!-- Right Container (Damage dice) -->
+        <div>
+            <h2>Damage dice</h2>
+            <label for="dice_amount">Amount of Dice:</label>
+            <input type="number" id="dice_amount" name="dice_amount" min="1" value="1">
+        </div>
+        <div>
+            <label for="dice_type">Dice Type:</label>
+            <select id="dice_type" name="dice_type" required>
+                <option value="d4">d4</option>
+                <option value="d6">d6</option>
+                <option value="d8">d8</option>
+                <option value="d10">d10</option>
+                <option value="d12">d12</option>
+            </select>
+        </div>
+        <div>
+            <label for="damage_modifier">Damage Modifier:</label>
+            <input type="number" id="damage_modifier" name="damage_modifier" value="0">
+        </div>
+        <div>
+            <label for="damage_type">Damage Type:</label>
+            <select id="damage_type" name="damage_type" required>
+                <option value="Slashing">Slashing</option>
+                <option value="Piercing">Piercing</option>
+                <option value="Bludgeoning">Bludgeoning</option>
+                <option value="Fire">Fire</option>
+                <option value="Cold">Cold</option>
+                <option value="Lightning">Lightning</option>
+                <option value="Acid">Acid</option>
+                <option value="Poison">Poison</option>
+                <option value="Necrotic">Necrotic</option>
+                <option value="Radiant">Radiant</option>
+                <option value="Force">Force</option>
+                <option value="Psychic">Psychic</option>
+                
+            </select>
+        </div>
+        <div>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
 </body>
 </html>
-
