@@ -196,13 +196,15 @@ class Dice:
             if attack_matrix['adv'] == False and attack_matrix['disadv'] == False:
                 roll = self.roll_attack(attack_matrix['modifier'],
                                         attack_matrix['AC'])
+                
             elif attack_matrix['adv']:
                 roll = self.roll_attack(attack_matrix['modifier'],
                                         attack_matrix['AC'],adv=True)
-            
+                
             else:
                 roll = self.roll_attack(attack_matrix['modifier'],
                                         attack_matrix['AC'],adv=False)
+                
             attacks.append(roll)
         return attacks
     
