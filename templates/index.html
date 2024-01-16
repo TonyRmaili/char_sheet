@@ -5,112 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Large Attack Rolls</title>
     <style>
-        /* Add some CSS styling for layout */
-        .form-container > div {
-            margin-bottom: 10px; /* Optional: Add some margin between the label-input pairs */
+        .column {
+          width: 30%;
+          float: left;
+          box-sizing: border-box;
         }
+        
     </style>
     
 </head>
 <body>
-    <h2>Large Attack Rolls</h2>
-    <form action='/roll_atk' method="POST">
-        <!-- Top Container (Damage dice) -->
-        <div>
-            <label for="atk_amount">Amount of Attacks:</label>
-            <input type="number" id="atk_amount" name="atk_amount" min="1" value="1">
-        </div>
-        <div>
-            <label for="atk_mod">Attack Modifier:</label>
-            <input type="number" id="atk_mod" name="atk_mod" value="0">
-        </div>
-        <div>
-            <label for="AC">Target AC:</label>
-            <input type="number" id="AC" name="AC" min="0" value="10">
-        </div>
-        <div>
-            <label for="adv">Advantage:</label>
-            <select id="adv" name="adv" required>
-                <option value="True">True</option>
-                <option value="False">False</option>
-            </select>
-        </div>
-        <div>
-            <label for="dis_adv">Disadvantage:</label>
-            <select id="dis_adv" name="dis_adv" required>
-                <option value="True">True</option>
-                <option value="False">False</option>
-            </select>
-        </div>
-        <input type="submit" value="Roll Attack">
-    </form>
-        <hr>
-    <!-- Bottom Container (Damage dice) -->
-    <form action="/" method="POST"> 
-        <div>
-            <h2>Damage dice</h2>
-            <label for="dice_amount">Amount of Dice:</label>
-            <input type="number" id="dice_amount" name="dice_amount" min="1" value="1">
-        </div>
-        <div>
-            <label for="dice_type">Dice Type:</label>
-            <select id="dice_type" name="dice_type" required>
-                <option value="d4">d4</option>
-                <option value="d6">d6</option>
-                <option value="d8">d8</option>
-                <option value="d10">d10</option>
-                <option value="d12">d12</option>
-            </select>
-        </div>
-        <div>
-            <label for="damage_modifier">Damage Modifier:</label>
-            <input type="number" id="damage_modifier" name="damage_modifier" value="0">
-        </div>
-        <div>
-            <label for="damage_type">Damage Type:</label>
-            <select id="damage_type" name="damage_type" required>
-                <option value="Slashing">Slashing</option>
-                <option value="Piercing">Piercing</option>
-                <option value="Bludgeoning">Bludgeoning</option>
-                <option value="Fire">Fire</option>
-                <option value="Cold">Cold</option>
-                <option value="Lightning">Lightning</option>
-                <option value="Acid">Acid</option>
-                <option value="Poison">Poison</option>
-                <option value="Necrotic">Necrotic</option>
-                <option value="Radiant">Radiant</option>
-                <option value="Force">Force</option>
-                <option value="Psychic">Psychic</option>
+    <div class="column">
+        <h2>Large Attack Rolls</h2>
+        <form action='/roll_atk' method="POST">
+            <!-- Top Container (Damage dice) -->
+            <div>
+                <label for="atk_amount">Amount of Attacks:</label>
+                <input type="number" id="atk_amount" name="atk_amount" min="1" value="1">
+            </div>
+            <div>
+                <label for="atk_mod">Attack Modifier:</label>
+                <input type="number" id="atk_mod" name="atk_mod" value="0">
+            </div>
+            <div>
+                <label for="AC">Target AC:</label>
+                <input type="number" id="AC" name="AC" min="0" value="10">
+            </div>
+            <div>
+                <label for="adv">Advantage:</label>
+                <select id="adv" name="adv" required>
+                    <option value="True">True</option>
+                    <option value="False">False</option>
+                </select>
+            </div>
+            <div>
+                <label for="dis_adv">Disadvantage:</label>
+                <select id="dis_adv" name="dis_adv" required>
+                    <option value="True">True</option>
+                    <option value="False">False</option>
+                </select>
+            </div>
+            <input type="submit" value="Roll Attack">
+        </form>
+            <hr>
+
+        <!-- Bottom Container (Damage dice) -->
+        <form action="/" method="POST"> 
+            <div>
+                <h2>Damage dice</h2>
+                <label for="dice_amount">Amount of Dice:</label>
+                <input type="number" id="dice_amount" name="dice_amount" min="1" value="1">
+            </div>
+            <div>
+                <label for="dice_type">Dice Type:</label>
+                <select id="dice_type" name="dice_type" required>
+                    <option value="d4">d4</option>
+                    <option value="d6">d6</option>
+                    <option value="d8">d8</option>
+                    <option value="d10">d10</option>
+                    <option value="d12">d12</option>
+                </select>
+            </div>
+            <div>
+                <label for="damage_modifier">Damage Modifier:</label>
+                <input type="number" id="damage_modifier" name="damage_modifier" value="0">
+            </div>
+            <div>
+                <label for="damage_type">Damage Type:</label>
+                <select id="damage_type" name="damage_type" required>
+                    <option value="Slashing">Slashing</option>
+                    <option value="Piercing">Piercing</option>
+                    <option value="Bludgeoning">Bludgeoning</option>
+                    <option value="Fire">Fire</option>
+                    <option value="Cold">Cold</option>
+                    <option value="Lightning">Lightning</option>
+                    <option value="Acid">Acid</option>
+                    <option value="Poison">Poison</option>
+                    <option value="Necrotic">Necrotic</option>
+                    <option value="Radiant">Radiant</option>
+                    <option value="Force">Force</option>
+                    <option value="Psychic">Psychic</option>
+                    
+                </select>
+            </div>
+            <div>
+                <input type="submit" value="Add Damage Dice">
                 
-            </select>
-        </div>
-        <div>
-            <input type="submit" value="Add Damage Dice">
-            
-        </div>
-    </form>
-
-    <form action="/b"></form>
-
+            </div>
+        </form>
     
-    {% if attacks %}
-        <h2>Total Damage</h2>
-        <h3>Hits = {{ landed_atks[0] }}</h3>
-        <h3>Crits = {{ landed_atks[1] }}</h3>
+        {% if attacks %}
+            <h2>Total Damage</h2>
+            <h3>Hits = {{ landed_atks[0] }}</h3>
+            <h3>Crits = {{ landed_atks[1] }}</h3>
 
-        {% for dtype,total in attacks.items() %}
-            {% if total !=0 %}
-                <li>{{ dtype,total }}</li>
+            {% for dtype,total in attacks.items() %}
+                {% if total !=0 %}
+                    <li>{{ dtype,total }}</li>
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
+        
+
+        {% if damage_matrixes %}
+            <h2>Damage per Attack:</h2>
+            {% for item in damage_matrixes %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="column">
+        <h2>Large Save Rolls</h2>
+        <form action='/roll_saves' method="POST">
+            <div>
+                <label for="save_amount">Amount Saves:</label>
+                <input type="number" id="save_amount" name="save_amount" min="1" value="1">
+            </div>
+            <div>
+                <label for="save_mod">Save Modifier:</label>
+                <input type="number" id="save_mod" name="save_mod" value="0">
+            </div>
+            <div>
+                <label for="save_DC"> Save DC:</label>
+                <input type="number" id="save_DC" name="save_DC" min="0" value="10">
+            </div>
+            <div>
+                <label for="on_save">On Save:</label>
+                <select id="on_save" name="on_save" required>
+                    <option value="half_damage">Half Damage</option>
+                    <option value="no_damage">No damage</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="save_adv">Advantage:</label>
+                <select id="save_adv" name="save_adv" required>
+                    <option value="True">True</option>
+                    <option value="False">False</option>
+                </select>
+            </div>
+            <div>
+                <label for="save_dis_adv">Disadvantage:</label>
+                <select id="save_dis_adv" name="save_dis_adv" required>
+                    <option value="True">True</option>
+                    <option value="False">False</option>
+                </select>
+            </div>
+            <input type="submit" value="Roll Saves">
+        </form>
+        {% if saves %}
+            <h3>Saves {{saves[0]}}</h3>
+            <h3>Fails {{saves[1]}}</h3>
+            <h4> Total Damage per Foe {{dmg['Total']}} </h4>
+            {% for name,damage in dmg.items() %}
+                {% if damage != 0 and name !='Total' %}
+                    <li>{{name}} : {{damage}}</li>
                 {% endif %}
             {% endfor %}
-    {% endif %}
+        {% endif %}
+    </div>
     
-
-    {% if damage_matrixes %}
-        <h2>Damage per Attack:</h2>
-        {% for item in damage_matrixes %}
-                <li>{{ item }}</li>
-            {% endfor %}
-    {% endif %}
 </body>
 </html>

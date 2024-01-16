@@ -495,7 +495,54 @@ class Dice:
         for value in values:
             total+=value[1]
         return total
-    
+
+    # saves
+    def roll_saves(self,amount,mod,DC,adv,dis_adv):
+        saves=0
+        fails=0
+        for i in range(amount):
+            if adv == False and dis_adv == False:
+                roll = self.d20()
+            elif adv:
+                roll = self.roll_adv(self.d20)
+            elif dis_adv:
+                roll = self.roll_disadv(self.d20)
+            if roll+mod >= DC:
+                saves+=1
+            else:
+                fails+=1
+        return saves,fails
+
+    def roll_save_damage(self,damage_matrixes):
+        dmg_by_type = {}
+        for dtype in self.damage_types:
+            dmg_by_type[dtype] = []
+        grand_total =0
+        for matrix in damage_matrixes:
+            dtype_total=0
+            amount = matrix["amount"]
+            dice = matrix["name"]
+            mod = matrix["mod"]
+            dtype = matrix["type"]
+            roll = self.roll_damage_1(amount=amount,
+                dice_function=dice,mod=mod)
+            dmg_by_type[dtype].append((roll[0],roll[1],mod))
+            dtype_total+=roll[1] + mod
+            grand_total+=dtype_total
+        
+        cleand_save = self.clean_save(dmg_by_type=dmg_by_type)
+        cleand_save['Total'] = grand_total
+        
+        return cleand_save
+
+    def clean_save(self,dmg_by_type):
+        for dtype,damages in dmg_by_type.items():
+            dtype_total =0
+            for damage in damages:
+                total = damage[1]
+                dtype_total+=total +damage[2]
+            dmg_by_type[dtype] = dtype_total
+        return dmg_by_type
 
 if __name__=='__main__':
     d = Dice()

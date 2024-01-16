@@ -92,6 +92,34 @@ def roll_attacks_end():
 
         return render_template("index.html",attacks=cleaned_dmg,landed_atks=landed_atks)
 
+@app.route('/roll_saves',methods=['GET','POST'])
+def roll_saves():
+    dice=Dice()
+    if request.method == 'POST':
+        save_amount = int(request.form['save_amount'])
+        save_mod = int(request.form['save_mod'])
+        save_DC = int(request.form['save_DC'])
+        on_save = request.form['on_save']
+        adv = request.form['save_adv']
+        dis_adv = request.form['save_dis_adv']
+        if adv =='True':
+            adv = True
+        else:
+            adv =False
+        if dis_adv =='True':
+            dis_adv = True
+        else:
+            dis_adv =False
+        if adv == True and dis_adv == True:
+            adv=False
+            dis_adv=False
+
+        saves=dice.roll_saves(amount=save_amount,mod=save_mod,
+            DC=save_DC,adv=adv,dis_adv=dis_adv)
+        
+        dmg = dice.roll_save_damage(damage_matrixes=damage_matrixes)
+        return render_template('index.html',saves=saves,dmg=dmg)
+
 if __name__ == '__main__':
     app.run(host='localhost', port=5000, debug=True)
     
