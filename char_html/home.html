@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roll Empire</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <h1>Character Sheet</h1>
+    <div class="menu">
+       
+        <h2 class="my-button">Stats</h2>
+        <h2 class="my-button">Combat</h2>
+        <h2 class="my-button">Spellbook</h2>
+        <h2 class="my-button">Abilities</h2>
+        <h2 class="my-button">Dice Tower</h2>
+        <h2 class="my-button">Inventory</h2>
+        <h2 class="my-button">Load Character</h2>
+        <h2 class="my-button">Notes</h2>
+        
+    </div>
+    <script>
+        function toggleButton(button) {
+            // Remove 'active' class from all buttons
+            document.querySelectorAll('.my-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Add 'active' class to the clicked button
+            button.classList.add('active');
+        }
+    </script>
+</body>
+</html>

@@ -424,7 +424,6 @@ class FkGui4:
                         row_index+=1
                 row_index =0
                     
-
         def add_gold():
             try:
                 self.char.gold += int(self.gold_entry.get())
@@ -446,6 +445,9 @@ class FkGui4:
             spend_btn = tk.Button(gold_fr,text='Spend',
                                   command=spend_gold)
             spend_btn.grid(row=0,column=2)
+
+            gold_label = tk.Label(gold_fr,text=f'Gold {self.char.gold}')
+            gold_label.grid(row=0,column=3)
 
         def add_item():
             name = item_name_entry.get()
